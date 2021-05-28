@@ -11,10 +11,9 @@ if __name__ == '__main__':
     zmmf = ZMM('f')
     print(zmmf)
 
-    zmmd = ZMM('d')
-    print(zmmd)
-
-    zmmi = ZMM('i')
-    print(zmmi)
+    zmmf2 = zmmf.copy()
+    zmmf2[3] = 2.0
+    print(zmmf)
+    print(zmmf2)
 
 # ==================================================================================================
