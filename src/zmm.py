@@ -17,6 +17,8 @@ class ZMM:
         :param t: type
         """
 
+        self.Id = 0
+
         if t == 'f':
             self.T = 'f'
             self.N = 16
@@ -58,16 +60,38 @@ class ZMM:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __repr__(self):
+    def id_str(self):
         """
-        Convert to string.
+        Identifier string.
+
+        :return: string
+        """
+
+        return 'z{0}{1:02}.{2:02}'.format(self.T, self.N, self.Id)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def str_s(self):
+        """
+        Convert to string (short).
+
+        :return: string
+        """
+
+        return self.id_str()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def str_l(self):
+        """
+        Convert to string (long).
 
         :return: string
         """
 
         s = ['{0:5}'.format(e) for e in self.E]
 
-        return 'zmm{0}-{1:02}:[{2}]'.format(self.T, self.N, ', '.join(s))
+        return '{0}:[{1}]'.format(self.id_str(), ', '.join(s))
 
     # ----------------------------------------------------------------------------------------------
 

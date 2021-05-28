@@ -12,6 +12,8 @@ class Mask:
         :param n: count of elements
         """
 
+        self.Id = 0
+        self.T = 'm'
         self.N = 16
         self.E = [False] * self.N
 
@@ -41,16 +43,38 @@ class Mask:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __repr__(self):
+    def id_str(self):
         """
-        Convert mask to string.
+        Identifier string.
+
+        :return: string
+        """
+
+        return 'ms{0:02}.{1:02}'.format(self.N, self.Id)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def str_s(self):
+        """
+        Convert mask to string (short).
+
+        :return: string
+        """
+
+        return self.id_str()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def str_l(self):
+        """
+        Convert mask to string (long).
 
         :return: string
         """
 
         s = ['01'[e] for e in self.E]
 
-        return 'mask-{0:2}:[{1}]'.format(self.N, ''.join(s))
+        return '{0}:[{1}]'.format(self.id_str(), ''.join(s))
 
     # ----------------------------------------------------------------------------------------------
 

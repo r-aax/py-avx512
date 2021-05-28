@@ -1,19 +1,18 @@
 from mask import Mask
 from zmm import ZMM
+from operation import Operation
 
 # ==================================================================================================
 
 if __name__ == '__main__':
 
-    m = Mask(16)
-    print(m)
+    a = ZMM('f')
+    b = ZMM('f')
+    r = ZMM('f')
+    p = Mask(16)
 
-    zmmf = ZMM('f')
-    print(zmmf)
-
-    zmmf2 = zmmf.copy()
-    zmmf2[3] = 2.0
-    print(zmmf)
-    print(zmmf2)
+    oper = Operation('add-f', [a, b], r, p, True)
+    oper.print_s()
+    oper.print_l()
 
 # ==================================================================================================
