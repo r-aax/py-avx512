@@ -22,6 +22,10 @@ if __name__ == '__main__':
     # Semantic.
     cmp_oper = Operation('cmpgt-f', [a, b], m)
     bl_cond.add_operation(cmp_oper)
+    jump_add = Operation('jump', [m, True], bl_add)
+    bl_cond.add_operation(jump_add)
+    jump_mul = Operation('jump', [m, False], bl_mul)
+    bl_cond.add_operation(jump_mul)
     add_oper = Operation('add-f', [a, b], c)
     bl_add.add_operation(add_oper)
     mul_oper = Operation('mul-f', [a, b], c)

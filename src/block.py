@@ -27,6 +27,39 @@ class Block:
 
     # ----------------------------------------------------------------------------------------------
 
+    def id_str(self):
+        """
+        String representation.
+
+        :return: string
+        """
+
+        return 'Block {0}'.format(self.Id)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def str_s(self):
+        """
+        Convert to string.
+
+        :return: string representation
+        """
+
+        return self.id_str()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def str_l(self):
+        """
+        Convert to string.
+
+        :return: string representation
+        """
+
+        return self.id_str()
+
+    # ----------------------------------------------------------------------------------------------
+
     def print_s(self):
         """
         Print short version.

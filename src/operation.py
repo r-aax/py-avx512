@@ -35,6 +35,8 @@ class Operation:
             self.check_operation_cmp_f()
             self.Type = 'cmp'
             self.Fun = lambda a, b: a > b
+        elif name == 'jump':
+            self.Type = 'jump'
         else:
             raise Exception('Unknown operation name.')
 
@@ -126,15 +128,23 @@ class Operation:
         """
 
         # Form arguments string.
-        args_str = ', '.join([a.str_s() for a in self.Args])
+        if self.Type == 'jump':
+            args_str = '[{0} = {1}]'.format(self.Args[0].str_s(), self.Args[1])
+        else:
+            args_str = ', '.join([a.str_s() for a in self.Args])
 
         # Form predicate string.
-        pred_str = ''
         if self.Pred is not None:
             pred_str = ' ? {0}'.format(self.Pred.str_s())
+        else:
+            pred_str = ''
 
         # Form res string.
-        res_str = self.Res.str_s()
+
+        if self.Res is not None:
+            res_str = self.Res.str_s()
+        else:
+            res_str = ''
 
         # Print.
         print('{0:2}. {1}{2} : {3}{4} -> {5}'.format(self.Id,
@@ -152,15 +162,20 @@ class Operation:
         print('{0:2}. {1}{2}'.format(self.Id, self.Name, self.zflag_str()))
 
         # Print args.
-        for i in range(len(self.Args)):
-            print('    a | {0}'.format(self.Args[i].str_l()))
+        if self.Type == 'jump':
+            print('    a | {0}'.format(self.Args[0].str_l()))
+            print('      | {0}'.format(self.Args[1]))
+        else:
+            for i in range(len(self.Args)):
+                print('    a | {0}'.format(self.Args[i].str_l()))
 
         # Print predicate.
         if self.Pred is not None:
             print('    p | {0}'.format(self.Pred.str_l()))
 
         # Print result.
-        print('    r | {0}'.format(self.Res.str_l()))
+        if self.Res is not None:
+            print('    r | {0}'.format(self.Res.str_l()))
 
     # ----------------------------------------------------------------------------------------------
 
