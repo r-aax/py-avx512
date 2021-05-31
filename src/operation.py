@@ -31,6 +31,10 @@ class Operation:
             self.check_operation_arith2_f()
             self.Type = 'arith2'
             self.Fun = lambda a, b: a * b
+        elif name == 'cmpgt-f':
+            self.check_operation_cmp_f()
+            self.Type = 'cmp'
+            self.Fun = lambda a, b: a > b
         else:
             raise Exception('Unknown operation name.')
 
@@ -43,6 +47,17 @@ class Operation:
         self.check_operation(args_count=2,
                              args_types=['f', 'f'], res_type='f',
                              allow_zflag=True)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def check_operation_cmp_f(self):
+        """
+        Check operation cmp with float arguments.
+        """
+
+        self.check_operation(args_count=2,
+                             args_types=['f', 'f'], res_type='m',
+                             allow_zflag=False)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -190,6 +205,11 @@ class Operation:
                 self.Res[i] = self.Fun(self.Args[0][i], self.Args[1][i])
             elif self.is_zero_result():
                 self.Res.zero_element(i)
+        elif self.Type == 'cmp':
+            if self.is_perform_operation(i):
+                self.Res[i] = self.Fun(self.Args[0][i], self.Args[1][i])
+            else:
+                self.Res[i] = False
         else:
             raise Exception('Unknown operation type.')
 
