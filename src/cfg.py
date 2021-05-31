@@ -1,5 +1,6 @@
 from mask import Mask
 from zmm import ZMM
+from block import Block
 
 
 # ==================================================================================================
@@ -51,26 +52,18 @@ class CFG:
 
     # ----------------------------------------------------------------------------------------------
 
-    def add_block(self, block):
+    def alloc_block(self):
         """
-        Add block to CFG.
+        Allocate block.
 
-        :param bl: block
+        :return: new block
         """
 
+        block = Block()
+        block.Id = len(self.Blocks)
         self.Blocks.append(block)
 
-    # ----------------------------------------------------------------------------------------------
-
-    def add_blocks(self, blocks):
-        """
-        Add blocks to CFG.
-
-        :param blocks: blocks list
-        """
-
-        for block in blocks:
-            self.Blocks.append(block)
+        return block
 
     # ----------------------------------------------------------------------------------------------
 

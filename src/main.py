@@ -9,26 +9,29 @@ from cfg import CFG
 if __name__ == '__main__':
 
     cfg = CFG()
-    bl = Block()
+    bl_cond = cfg.alloc_block()
+    bl_add = cfg.alloc_block()
+    bl_mul = cfg.alloc_block()
 
-    # Create semantic.
+    # Registers.
     a = cfg.alloc_zmm('f')
     b = cfg.alloc_zmm('f')
     c = cfg.alloc_zmm('f')
+    m = cfg.alloc_mask()
+
+    # Semantic.
+    cmp_oper = Operation('cmpgt-f', [a, b], m)
+    bl_cond.add_operation(cmp_oper)
     add_oper = Operation('add-f', [a, b], c)
-    bl.add_operation(add_oper)
-    d = cfg.alloc_zmm('f')
-    e = cfg.alloc_zmm('f')
-    mul_oper = Operation('mul-f', [c, d], e)
-    bl.add_operation(mul_oper)
+    bl_add.add_operation(add_oper)
+    mul_oper = Operation('mul-f', [a, b], c)
+    bl_mul.add_operation(mul_oper)
 
     # Values.
     a.set_elements([1.0, 2.0, 3.0])
     b.set_elements([2.0, 3.0, 4.0])
-    d.set_elements([3.0, 4.0, 5.0])
-    bl.emulate_all()
 
-    bl.print_s()
-    bl.print_l()
+    cfg.print_s()
+    cfg.print_l()
 
 # ==================================================================================================
