@@ -109,4 +109,32 @@ class ZMM:
 
         return zmm
 
+    # ----------------------------------------------------------------------------------------------
+
+    def zero_element(self, i):
+        """
+        Set element to zero.
+
+        :param i: index
+        """
+
+        if (self.T == 'f') or (self.T == 'd'):
+            self[i] = 0.0
+        elif self.T == 'i':
+            self[i] = 0
+        else:
+            raise Exception('Unknown type of ZMM register.')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_all_elements(self, v):
+        """
+        Set all elements with the given value.
+
+        :param v: value
+        """
+
+        for i in range(self.N):
+            self[i] = v
+
 # ==================================================================================================
