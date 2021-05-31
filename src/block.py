@@ -5,12 +5,12 @@ class Block:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, name):
+    def __init__(self):
         """
         Constructor.
         """
 
-        self.Name = name
+        self.Id = 0
         self.Operations = []
 
     # ----------------------------------------------------------------------------------------------
@@ -32,12 +32,12 @@ class Block:
         Print short version.
         """
 
-        print('Block {0} begin:'.format(self.Name))
+        print('Block {0} begin:'.format(self.Id))
 
         for oper in self.Operations:
             oper.print_s()
 
-        print('Block {0} end.'.format(self.Name))
+        print('Block {0} end.'.format(self.Id))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -46,12 +46,12 @@ class Block:
         Print long version.
         """
 
-        print('Block {0} begin:'.format(self.Name))
+        print('Block {0} begin:'.format(self.Id))
 
         for oper in self.Operations:
             oper.print_l()
 
-        print('Block {0} end.'.format(self.Name))
+        print('Block {0} end.'.format(self.Id))
 
     # ----------------------------------------------------------------------------------------------
 
