@@ -92,4 +92,28 @@ class Mask:
 
         return m
 
+    # ----------------------------------------------------------------------------------------------
+
+    def set_all_elements(self, v):
+        """
+        Set all elements with the given value.
+
+        :param v: value
+        """
+
+        for i in range(self.N):
+            self[i] = v
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_elements(self, vs):
+        """
+        Set element with values from array.
+
+        :param vs: array of values
+        """
+
+        for i in range(min(self.N, len(vs))):
+            self[i] = vs[i]
+
 # ==================================================================================================

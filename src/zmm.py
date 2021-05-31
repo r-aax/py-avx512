@@ -137,4 +137,16 @@ class ZMM:
         for i in range(self.N):
             self[i] = v
 
+    # ----------------------------------------------------------------------------------------------
+
+    def set_elements(self, vs):
+        """
+        Set elements with array of values.
+
+        :param vs: array of values
+        """
+
+        for i in range(min(self.N, len(vs))):
+            self[i] = vs[i]
+
 # ==================================================================================================

@@ -16,38 +16,43 @@ class Operation:
         :param zflag: zero flag for result register
         """
 
+        self.Id = 0
         self.Name = name
-
-        if name == 'add-f':
-            Operation.check_operation(name, args, res, pred, zflag,
-                                      args_count=2,
-                                      args_types=['f', 'f'], res_type='f',
-                                      allow_zflag=True)
-            self.Type = 'arith2'
-            self.Fun = lambda a, b: a + b
-        else:
-            raise Exception('Unknown operation name.')
-
         self.Args = args
         self.Res = res
         self.Pred = pred
         self.ZFlag = zflag
 
+        if name == 'add-f':
+            self.check_operation_arith2_f()
+            self.Type = 'arith2'
+            self.Fun = lambda a, b: a + b
+        elif name == 'mul-f':
+            self.check_operation_arith2_f()
+            self.Type = 'arith2'
+            self.Fun = lambda a, b: a * b
+        else:
+            raise Exception('Unknown operation name.')
+
     # ----------------------------------------------------------------------------------------------
 
-    @staticmethod
-    def check_operation(name, args, res, pred, zflag,
+    def check_operation_arith2_f(self):
+        """
+        Check operation arith2 with float arguments.
+        """
+        self.check_operation(args_count=2,
+                             args_types=['f', 'f'], res_type='f',
+                             allow_zflag=True)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def check_operation(self,
                         args_count,
                         args_types, res_type,
                         allow_zflag):
         """
         Check operation.
 
-        :param name: name of operation
-        :param args: list of arguments
-        :param res: result of the operation
-        :param pred: predicate
-        :param zflag: zero flag
         :param args_count: count of arguments
         :param args_types: arguments types
         :param res_type: result type
@@ -55,33 +60,33 @@ class Operation:
         """
 
         # Check arguments count.
-        if len(args) != args_count:
-            raise Exception('Wrong arguments count in {0} operation.'.format(name))
+        if len(self.Args) != args_count:
+            raise Exception('Wrong arguments count in {0} operation.'.format(self.Name))
 
         # Check arguments types.
         for i in range(args_count):
-            if args[i].T != args_types[i]:
-                raise Exception('Wrong argument type in {0} operation.'.format(name))
+            if self.Args[i].T != args_types[i]:
+                raise Exception('Wrong argument type in {0} operation.'.format(self.Name))
 
         # Check result type.
-        if res.T != res_type:
-            raise Exception('Wrong result type in {0} operation.'.format(name))
+        if self.Res.T != res_type:
+            raise Exception('Wrong result type in {0} operation.'.format(self.Name))
 
         # Check allow zflag.
         if not allow_zflag:
-            if zflag is not None:
-                raise Exception('No zflag is allowed for {0} operation.'.format(name))
+            if self.ZFlag is not None:
+                raise Exception('No zflag is allowed for {0} operation.'.format(self.Name))
 
         # Check sizes of arguments, result and predicate.
-        w = args[0].N
-        for i in range(len(args)):
-            if args[i].N != w:
-                raise Exception('Wrong arguments width in {0} operation.'.format(name))
-        if res.N != w:
-            raise Exception('Wrong result width in {0} operation.'.format(name))
-        if pred is not None:
-            if pred.N != w:
-                raise Exception('Wrong predicate width i {0} operation.'.format(name))
+        w = self.Args[0].N
+        for i in range(len(self.Args)):
+            if self.Args[i].N != w:
+                raise Exception('Wrong arguments width in {0} operation.'.format(self.Name))
+        if self.Res.N != w:
+            raise Exception('Wrong result width in {0} operation.'.format(self.Name))
+        if self.Pred is not None:
+            if self.Pred.N != w:
+                raise Exception('Wrong predicate width i {0} operation.'.format(self.Name))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -117,8 +122,9 @@ class Operation:
         res_str = self.Res.str_s()
 
         # Print.
-        print('{0}{1} : {2}{3} -> {4}'.format(self.Name, self.zflag_str(),
-                                              args_str, pred_str, res_str))
+        print('{0:2}. {1}{2} : {3}{4} -> {5}'.format(self.Id,
+                                                     self.Name, self.zflag_str(),
+                                                     args_str, pred_str, res_str))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -128,7 +134,7 @@ class Operation:
         """
 
         # Print head of operation.
-        print('{0}{1}'.format(self.Name, self.zflag_str()))
+        print('{0:2}. {1}{2}'.format(self.Id, self.Name, self.zflag_str()))
 
         # Print args.
         for i in range(len(self.Args)):
