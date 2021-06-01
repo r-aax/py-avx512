@@ -1,6 +1,27 @@
 
 # ==================================================================================================
 
+
+def operation_res_type(name):
+    """
+    Get operation result type by name.
+
+    :param name: operation name
+    :return: operation result type
+    """
+
+    if name in ['add-f', 'sub-f', 'mul-f', 'div-f', 'set-f', 'blend-f']:
+        return 'f'
+    elif name in ['cmpgt-f', 'cmplt-f']:
+        return 'm'
+    else:
+        raise Exception('Unexpected operation name in '
+                        '"operation_res_type", name = {0}'.format(name))
+
+
+# ==================================================================================================
+
+
 class Operation:
 
     # ----------------------------------------------------------------------------------------------
@@ -27,20 +48,34 @@ class Operation:
             self.check_operation_arith2_f()
             self.Type = 'arith2'
             self.Fun = lambda a, b: a + b
+        elif name == 'sub-f':
+            self.check_operation_arith2_f()
+            self.Type = 'arith2'
+            self.Fun = lambda a, b: a - b
         elif name == 'mul-f':
             self.check_operation_arith2_f()
             self.Type = 'arith2'
             self.Fun = lambda a, b: a * b
+        elif name == 'div-f':
+            self.check_operation_arith2_f()
+            self.Type = 'arith2'
+            self.Fun = lambda a, b: a / b
         elif name == 'cmpgt-f':
             self.check_operation_cmp_f()
             self.Type = 'cmp'
             self.Fun = lambda a, b: a > b
-        elif name == 'set':
+        elif name == 'cmplt-f':
+            self.check_operation_cmp_f()
+            self.Type = 'cmp'
+            self.Fun = lambda a, b: a < b
+        elif name == 'set-f':
             self.Type = 'set'
+        elif name == 'blend-f':
+            self.Type = 'blend'
         elif name == 'jump':
             self.Type = 'jump'
         else:
-            raise Exception('Unknown operation name.')
+            raise Exception('Unknown operation name {0}.'.format(name))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -233,6 +268,11 @@ class Operation:
                 self.Res[i] = False
         elif self.Type == 'set':
             self.Res[i] = self.Args[0]
+        elif self.Type == 'blend':
+            if self.Pred[i]:
+                self.Res[i] = self.Args[0][i]
+            else:
+                self.Res[i] = self.Args[1][i]
         else:
             raise Exception('Unknown operation type.')
 

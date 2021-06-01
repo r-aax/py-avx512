@@ -26,10 +26,45 @@ def sample_guessp_cfg():
 
     cfg = CFG()
 
+    # Input parameters.
+    dl = cfg.alloc_zmm('f')
+    ul = cfg.alloc_zmm('f')
+    pl = cfg.alloc_zmm('f')
+    cl = cfg.alloc_zmm('f')
+    dr = cfg.alloc_zmm('f')
+    ur = cfg.alloc_zmm('f')
+    pr = cfg.alloc_zmm('f')
+    cr = cfg.alloc_zmm('f')
+
+    # Output parameters.
+    pm = cfg.alloc_zmm('f')
+
     # First block, before jumps.
-    block0 = cfg.alloc_block()
-    quser = cfg.alloc_zmm('f')
-    block0.add_operation(Operation('set', [2.0], quser))
+    b0 = cfg.alloc_block()
+    quser = b0.op('set-f', [2.0])
+    cup = b0.op('mul-f',
+                [b0.op('mul-f',
+                       [b0.op('set-f', [0.25]),
+                        b0.op('add-f', [dl, dr])]),
+                 b0.op('add-f', [cl, cr])])
+    ppv1 = b0.op('add-f',
+                 [b0.op('mul-f',
+                        [b0.op('set-f', [0.5]),
+                         b0.op('add-f', [pl, pr])]),
+                  b0.op('mul-f',
+                        [b0.op('mul-f',
+                               [b0.op('set-f', [0.5]),
+                                b0.op('sub-f', [ul, ur])]),
+                         cup])])
+    ppv = b0.op('blend-f',
+                [ppv1,
+                 b0.op('set-f', [0.0])],
+                b0.op('cmpgt-f',
+                      [ppv1,
+                       b0.op('set-f', [0.0])]))
+    pmin = b0.op('blend-f', [pl, pr], b0.op('cmplt-f', [pl, pr]))
+    pmax = b0.op('blend-f', [pl, pr], b0.op('cmpgt-f', [pl, pr]))
+    qmax = b0.op('div-f', [pmax, pmin])
 
     return cfg
 
@@ -39,6 +74,8 @@ def sample_guessp_cfg():
 if __name__ == '__main__':
 
     cfg = sample_guessp_cfg()
+    for i in range(8):
+        cfg.ZMMs[i].set_all_elements(1.0)
 
     # Emulate.
     cfg.emulate_all()

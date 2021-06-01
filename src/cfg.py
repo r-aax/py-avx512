@@ -60,6 +60,7 @@ class CFG:
         """
 
         block = Block()
+        block.CFG = self
         block.Id = len(self.Blocks)
         self.Blocks.append(block)
 
