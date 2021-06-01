@@ -187,6 +187,11 @@ class CFG:
         Emulate CFG in all positions.
         """
 
+        # First clear all.
+        for zmm in self.ZMMs:
+            if not zmm.IsA:
+                zmm.set_all_elements(0.0)
+
         # Get width from the result
         # of the first operation of the first block of the CFG.
         n = self.Blocks[0].Operations[0].Res.N
@@ -203,7 +208,11 @@ class CFG:
         :return: operations count
         """
 
-        return len(self.Operations)
+        c1 = len(self.Operations)
+        c2 = sum([len(b.Operations) for b in self.Blocks])
+        assert c1 == c2
+
+        return c1
 
     # ----------------------------------------------------------------------------------------------
 

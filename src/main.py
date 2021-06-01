@@ -173,6 +173,28 @@ def sample_guessp_cfg():
 # --------------------------------------------------------------------------------------------------
 
 
+def init(cfg, ini):
+    """
+    Init arguments.
+
+    :param cfg: CFG
+    :param ini: init parameter
+    """
+
+    for arg in cfg.get_arguments():
+        if ini is None:
+            pass
+        elif isinstance(ini, float):
+            arg.set_all_elements(ini)
+        elif ini == 'r':
+            arg.set_elements_random()
+        else:
+            raise Exception('Unknown type of initialization ({0}).'.format(ini))
+
+
+# --------------------------------------------------------------------------------------------------
+
+
 def run(cfg, cases, ini):
     """
     Run CFG and print information.
@@ -185,13 +207,7 @@ def run(cfg, cases, ini):
     cfg.reset_counters()
 
     for _ in range(cases):
-        for arg in cfg.get_arguments():
-            if isinstance(ini, float):
-                arg.set_all_elements(ini)
-            elif ini == 'r':
-                arg.set_elements_random()
-            else:
-                raise Exception('Unknown type of initialization ({0}).'.format(ini))
+        init(cfg, ini)
         cfg.emulate_all()
 
     # Number of operations.
@@ -212,10 +228,13 @@ def run(cfg, cases, ini):
 
 if __name__ == '__main__':
 
-    cases = 100
+    cases = 1
     cfg = sample_guessp_cfg()
+    cfg.print_s()
 
-    run(cfg, cases, 'r')
+    init(cfg, 'r')
+    run(cfg, cases, None)
+    run(cfg, cases, None)
 
 
 # ==================================================================================================
