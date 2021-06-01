@@ -1,5 +1,6 @@
 
 # ==================================================================================================
+import math
 
 
 def operation_res_type(name):
@@ -10,7 +11,7 @@ def operation_res_type(name):
     :return: operation result type
     """
 
-    if name in ['mov-f', 'add-f', 'sub-f', 'mul-f', 'div-f', 'set-f', 'blend-f']:
+    if name in ['mov-f', 'sqrt-f', 'add-f', 'sub-f', 'mul-f', 'div-f', 'pow-f', 'set-f', 'blend-f']:
         return 'f'
     elif name in ['cmpgt-f', 'cmplt-f', 'cmpge-f', 'cmple-f', 'and-m']:
         return 'm'
@@ -48,6 +49,10 @@ class Operation:
             self.check_operation_arith1_f()
             self.Type = 'arith1'
             self.Fun = lambda a: a
+        elif name == 'sqrt-f':
+            self.check_operation_arith1_f()
+            self.Type = 'arith1'
+            self.Fun = lambda a: math.sqrt(a)
         elif name == 'add-f':
             self.check_operation_arith2_f()
             self.Type = 'arith2'
@@ -64,6 +69,10 @@ class Operation:
             self.check_operation_arith2_f()
             self.Type = 'arith2'
             self.Fun = lambda a, b: a / b
+        elif name == 'pow-f':
+            self.check_operation_arith2_f()
+            self.Type = 'arith2'
+            self.Fun = lambda a, b: math.pow(a, b)
         elif name == 'cmpgt-f':
             self.check_operation_cmp_f()
             self.Type = 'cmp'
