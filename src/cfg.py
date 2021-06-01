@@ -99,4 +99,51 @@ class CFG:
 
         print('========== ========== ========== ========== ==========')
 
+    # ----------------------------------------------------------------------------------------------
+
+    def emulate(self, i):
+        """
+        Emulate CFG on position i.
+
+        :param i: index
+        """
+
+        # Start emulation with 0-th block.
+        block = self.Blocks[0]
+        oper_index = 0
+
+        # Infinite loop of emulation.
+        while True:
+
+            # If we ca not execute next operation - stop here.
+            if oper_index >= len(block.Operations):
+                break
+
+            oper = block.Operations[oper_index]
+
+            # Process jump with special case.
+            if oper.Type == 'jump':
+                if oper.Args[0][i] == oper.Args[1]:
+                    block = oper.Res
+                    oper_index = 0
+                else:
+                    oper_index += 1
+            else:
+                oper.emulate(i)
+                oper_index += 1
+
+    # ----------------------------------------------------------------------------------------------
+
+    def emulate_all(self):
+        """
+        Emulate CFG in all positions.
+        """
+
+        # Get width from the first argument
+        # of the first operation of the first block of the CFG.
+        n = self.Blocks[0].Operations[0].Args[0].N
+
+        for i in range(n):
+            self.emulate(i)
+
 # ==================================================================================================
