@@ -4,41 +4,46 @@ from operation import Operation
 from block import Block
 from cfg import CFG
 
+# --------------------------------------------------------------------------------------------------
+
+
+def sample_guessp_cfg():
+    """
+    CFG for guessp function of riemann solver.
+    :return: CFG
+    """
+
+    # Constants.
+    gama = 1.4
+    g1 = (gama - 1.0) / (2.0 * gama)
+    g2 = (gama + 1.0) / (2.0 * gama)
+    g3 = (2.0 * gama) / (gama - 1.0)
+    g4 = 2.0 / (gama - 1.0)
+    g5 = 2.0 / (gama + 1.0)
+    g6 = (gama - 1.0) / (gama + 1.0)
+    g7 = (gama - 1.0) / 2.0
+    g8 = gama - 1.0
+
+    cfg = CFG()
+
+    # First block, before jumps.
+    block0 = cfg.alloc_block()
+    quser = cfg.alloc_zmm('f')
+    block0.add_operation(Operation('set', [2.0], quser))
+
+    return cfg
+
+
 # ==================================================================================================
 
 if __name__ == '__main__':
 
-    cfg = CFG()
-    bl_cond = cfg.alloc_block()
-    bl_add = cfg.alloc_block()
-    bl_mul = cfg.alloc_block()
+    cfg = sample_guessp_cfg()
 
-    # Registers.
-    a = cfg.alloc_zmm('f')
-    b = cfg.alloc_zmm('f')
-    c = cfg.alloc_zmm('f')
-    m = cfg.alloc_mask()
-
-    # Semantic.
-    cmp_oper = Operation('cmpgt-f', [a, b], m)
-    bl_cond.add_operation(cmp_oper)
-    jump_add = Operation('jump', [m, True], bl_add)
-    bl_cond.add_operation(jump_add)
-    jump_mul = Operation('jump', [m, False], bl_mul)
-    bl_cond.add_operation(jump_mul)
-    add_oper = Operation('add-f', [a, b], c)
-    bl_add.add_operation(add_oper)
-    mul_oper = Operation('mul-f', [a, b], c)
-    bl_mul.add_operation(mul_oper)
-
-    # Values.
-    a.set_elements([ 1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,
-                     9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0])
-    b.set_elements([16.0, 15.0, 14.0, 13.0, 12.0, 11.0, 10.0,  9.0,
-                     8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0,  1.0])
-
+    # Emulate.
     cfg.emulate_all()
 
+    # Print.
     cfg.print_s()
     cfg.print_l()
 

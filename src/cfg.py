@@ -139,9 +139,9 @@ class CFG:
         Emulate CFG in all positions.
         """
 
-        # Get width from the first argument
+        # Get width from the result
         # of the first operation of the first block of the CFG.
-        n = self.Blocks[0].Operations[0].Args[0].N
+        n = self.Blocks[0].Operations[0].Res.N
 
         for i in range(n):
             self.emulate(i)

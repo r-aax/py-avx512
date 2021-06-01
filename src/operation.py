@@ -35,6 +35,8 @@ class Operation:
             self.check_operation_cmp_f()
             self.Type = 'cmp'
             self.Fun = lambda a, b: a > b
+        elif name == 'set':
+            self.Type = 'set'
         elif name == 'jump':
             self.Type = 'jump'
         else:
@@ -128,7 +130,9 @@ class Operation:
         """
 
         # Form arguments string.
-        if self.Type == 'jump':
+        if self.Type == 'set':
+            args_str = '{0}'.format(self.Args[0])
+        elif self.Type == 'jump':
             args_str = '[{0} = {1}]'.format(self.Args[0].str_s(), self.Args[1])
         else:
             args_str = ', '.join([a.str_s() for a in self.Args])
@@ -162,7 +166,9 @@ class Operation:
         print('{0:2}. {1}{2}'.format(self.Id, self.Name, self.zflag_str()))
 
         # Print args.
-        if self.Type == 'jump':
+        if self.Type == 'set':
+            print('    a | {0}'.format(self.Args[0]))
+        elif self.Type == 'jump':
             print('    a | {0}'.format(self.Args[0].str_l()))
             print('      | {0}'.format(self.Args[1]))
         else:
@@ -225,6 +231,8 @@ class Operation:
                 self.Res[i] = self.Fun(self.Args[0][i], self.Args[1][i])
             else:
                 self.Res[i] = False
+        elif self.Type == 'set':
+            self.Res[i] = self.Args[0]
         else:
             raise Exception('Unknown operation type.')
 
