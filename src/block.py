@@ -3,6 +3,7 @@ from zmm import ZMM
 import operation
 from operation import Operation
 
+
 # ==================================================================================================
 
 class Block:
@@ -16,6 +17,7 @@ class Block:
 
         self.Id = 0
         self.Operations = []
+        self.Counter = 0
 
     # ----------------------------------------------------------------------------------------------
 
@@ -26,7 +28,8 @@ class Block:
         :param operation: operation
         """
 
-        operation.Id = len(self.Operations)
+        operation.Id = len(self.CFG.Operations)
+        self.CFG.Operations.append(operation)
         self.Operations.append(operation)
 
     # ----------------------------------------------------------------------------------------------

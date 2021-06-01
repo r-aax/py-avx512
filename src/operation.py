@@ -200,12 +200,9 @@ class Operation:
 
         # Form arguments string.
         if self.Type == 'set':
-            args_str = '{0}'.format(self.Args[0])
+            args_str = '{0}'.format(round(self.Args[0], 5))
         elif self.Type == 'jump':
-            if self.Args[0] is None:
-                args_str = ''
-            else:
-                args_str = '[{0} = {1}]'.format(self.Args[0].str_s(), self.Args[1])
+            args_str = ''
         else:
             args_str = ', '.join([a.str_s() for a in self.Args])
 
@@ -223,14 +220,25 @@ class Operation:
             res_str = ''
 
         # Print.
-        if (self.Name == 'jump') and (self.Args[0] is None):
-            print('{0:2}. {1}{2} -> {3}'.format(self.Id,
-                                                self.Name, self.zflag_str(),
-                                                res_str))
+        if self.Name == 'jump':
+            if self.Args[0] is None:
+                print('{0:2}. {1}{2} -> {3}'.format(self.Id,
+                                                    self.Name, self.zflag_str(),
+                                                    res_str))
+            elif self.Args[1]:
+                print('{0:2}. {1}{2} ? {3} -> {4}'.format(self.Id,
+                                                          self.Name, self.zflag_str(),
+                                                          self.Args[0].str_s(),
+                                                          res_str))
+            else:
+                print('{0:2}. {1}{2} ? !{3} -> {4}'.format(self.Id,
+                                                              self.Name, self.zflag_str(),
+                                                              self.Args[0].str_s(),
+                                                              res_str))
         else:
-            print('{0:2}. {1}{2} : {3}{4} -> {5}'.format(self.Id,
-                                                         self.Name, self.zflag_str(),
-                                                         args_str, pred_str, res_str))
+            print('{0:2}. {1}{2} {3}{4} -> {5}'.format(self.Id,
+                                                       self.Name, self.zflag_str(),
+                                                       args_str, pred_str, res_str))
 
     # ----------------------------------------------------------------------------------------------
 

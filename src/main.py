@@ -27,17 +27,17 @@ def sample_guessp_cfg():
     cfg = CFG()
 
     # Input parameters.
-    dl = cfg.alloc_zmm('f')
-    ul = cfg.alloc_zmm('f')
-    pl = cfg.alloc_zmm('f')
-    cl = cfg.alloc_zmm('f')
-    dr = cfg.alloc_zmm('f')
-    ur = cfg.alloc_zmm('f')
-    pr = cfg.alloc_zmm('f')
-    cr = cfg.alloc_zmm('f')
+    dl = cfg.alloc_argument('f')
+    ul = cfg.alloc_argument('f')
+    pl = cfg.alloc_argument('f')
+    cl = cfg.alloc_argument('f')
+    dr = cfg.alloc_argument('f')
+    ur = cfg.alloc_argument('f')
+    pr = cfg.alloc_argument('f')
+    cr = cfg.alloc_argument('f')
 
     # Output parameters.
-    pm = cfg.alloc_zmm('f')
+    pm = cfg.alloc_result('f')
 
     # Blocks.
     b0 = cfg.alloc_block()
@@ -170,19 +170,52 @@ def sample_guessp_cfg():
     return cfg
 
 
+# --------------------------------------------------------------------------------------------------
+
+
+def run(cfg, cases, ini):
+    """
+    Run CFG and print information.
+
+    :param cfg: CFG
+    :param cases: number of cases
+    """
+
+    # Set arguments, emulate and print results.
+    cfg.reset_counters()
+
+    for _ in range(cases):
+        for arg in cfg.get_arguments():
+            if isinstance(ini, float):
+                arg.set_all_elements(ini)
+            elif ini == 'r':
+                arg.set_elements_random()
+            else:
+                raise Exception('Unknown type of initialization ({0}).'.format(ini))
+        cfg.emulate_all()
+
+    # Number of operations.
+    print('CFG operations count = {0}.'.format(cfg.operations_count()))
+    print('CFG operations performed = {0}.'.format(cfg.OpersPerformed))
+    print('CFG average path length = {0}.'.format(cfg.OpersPerformed
+                                                  / (cfg.operations_count() * cases)))
+
+    # Print all arguments and registers.
+    cfg.print_arguments_and_results()
+
+    # Prints counters.
+    cfg.print_blocks_counters()
+
+
 # ==================================================================================================
+
 
 if __name__ == '__main__':
 
+    cases = 100
     cfg = sample_guessp_cfg()
-    for i in range(8):
-        cfg.ZMMs[i].set_all_elements(1.0)
 
-    # Emulate.
-    # cfg.emulate_all()
+    run(cfg, cases, 'r')
 
-    # Print.
-    cfg.print_s()
-    # cfg.print_l()
 
 # ==================================================================================================

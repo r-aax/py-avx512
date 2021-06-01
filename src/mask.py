@@ -50,7 +50,9 @@ class Mask:
         :return: string
         """
 
-        return 'ms{0:02}.{1:02}'.format(self.N, self.Id)
+        # return 'ms{0:02}.{1:02}'.format(self.N, self.Id)
+
+        return 'm{0:02}'.format(self.Id)
 
     # ----------------------------------------------------------------------------------------------
 

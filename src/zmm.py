@@ -1,5 +1,7 @@
 
 # ==================================================================================================
+import random
+
 
 class ZMM:
 
@@ -34,6 +36,27 @@ class ZMM:
         else:
             raise Exception('Unknown ZMM type.')
 
+        self.IsA = False
+        self.IsR = False
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_arg(self):
+        """
+        Set flag that this register is argument.
+        """
+
+        self.IsA = True
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_res(self):
+        """
+        Set flag that this register is result.
+        """
+
+        self.IsR = True
+
     # ----------------------------------------------------------------------------------------------
 
     def __getitem__(self, item):
@@ -67,7 +90,16 @@ class ZMM:
         :return: string
         """
 
-        return 'z{0}{1:02}.{2:02}'.format(self.T, self.N, self.Id)
+        # return 'z{0}{1:02}.{2:02}'.format(self.T, self.N, self.Id)
+
+        if self.IsA:
+            ch = 'a'
+        elif self.IsR:
+            ch = 'r'
+        else:
+            ch = 'v'
+
+        return '{0}{1:02}'.format(ch, self.Id)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -89,7 +121,7 @@ class ZMM:
         :return: string
         """
 
-        s = ['{0:5}'.format(e) for e in self.E]
+        s = ['{0:8}'.format(round(e, 5)) for e in self.E]
 
         return '{0}:[{1}]'.format(self.id_str(), ', '.join(s))
 
@@ -148,5 +180,18 @@ class ZMM:
 
         for i in range(min(self.N, len(vs))):
             self[i] = vs[i]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_elements_random(self, low=0.0, hi=1.0):
+        """
+        Set random values to register.
+
+        :param low: low border of random values
+        :param hi: high border of random values
+        """
+
+        for i in range(self.N):
+            self[i] = random.uniform(low, hi)
 
 # ==================================================================================================

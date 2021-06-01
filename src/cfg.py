@@ -17,6 +17,8 @@ class CFG:
         self.ZMMs = []
         self.Masks = []
         self.Blocks = []
+        self.Operations = []
+        self.OpersPerformed = 0
 
     # ----------------------------------------------------------------------------------------------
 
@@ -31,6 +33,36 @@ class CFG:
         zmm = ZMM(t)
         zmm.Id = len(self.ZMMs)
         self.ZMMs.append(zmm)
+
+        return zmm
+
+    # ----------------------------------------------------------------------------------------------
+
+    def alloc_argument(self, t):
+        """
+        Allocate argument of CFG.
+
+        :param t: type
+        :return: argument register
+        """
+
+        zmm = self.alloc_zmm(t)
+        zmm.set_arg()
+
+        return zmm
+
+    # ----------------------------------------------------------------------------------------------
+
+    def alloc_result(self, t):
+        """
+        Allocate result of CFG.
+
+        :param t: type
+        :return: result register
+        """
+
+        zmm = self.alloc_zmm(t)
+        zmm.set_res()
 
         return zmm
 
@@ -102,6 +134,20 @@ class CFG:
 
     # ----------------------------------------------------------------------------------------------
 
+    def enter_block(self, b):
+        """
+        Enter block.
+
+        :param b: block
+        :return: block and 0 (index of input operation).
+        """
+
+        b.Counter += 1
+
+        return b, 0
+
+    # ----------------------------------------------------------------------------------------------
+
     def emulate(self, i):
         """
         Emulate CFG on position i.
@@ -110,8 +156,7 @@ class CFG:
         """
 
         # Start emulation with 0-th block.
-        block = self.Blocks[0]
-        oper_index = 0
+        block, oper_index = self.enter_block(self.Blocks[0])
 
         # Infinite loop of emulation.
         while True:
@@ -125,15 +170,14 @@ class CFG:
             # Process jump with special case.
             if oper.Type == 'jump':
                 if oper.Args[0] is None:
-                    block = oper.Res
-                    oper_index = 0
+                    block, oper_index = self.enter_block(oper.Res)
                 elif oper.Args[0][i] == oper.Args[1]:
-                    block = oper.Res
-                    oper_index = 0
+                    block, oper_index = self.enter_block(oper.Res)
                 else:
                     oper_index += 1
             else:
                 oper.emulate(i)
+                self.OpersPerformed += 1
                 oper_index += 1
 
     # ----------------------------------------------------------------------------------------------
@@ -149,5 +193,84 @@ class CFG:
 
         for i in range(n):
             self.emulate(i)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def operations_count(self):
+        """
+        Get operations count.
+
+        :return: operations count
+        """
+
+        return len(self.Operations)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_arguments(self):
+        """
+        Get arguments.
+
+        :return: arguments
+        """
+
+        return [zmm for zmm in self.ZMMs if zmm.IsA]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_results(self):
+        """
+        Get results.
+
+        :return: results
+        """
+
+        return [zmm for zmm in self.ZMMs if zmm.IsR]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def print_arguments_and_results(self):
+        """
+        Print all arguments and results.
+        """
+
+        arguments = self.get_arguments()
+        results = self.get_results()
+
+        print('Arguments:')
+        for a in arguments:
+            print('    {0}'.format(a.str_l()))
+
+        print('Results:')
+        for r in results:
+            print('    {0}'.format(r.str_l()))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def reset_counters(self):
+        """
+        Resert operations performed.
+        """
+
+        self.OpersPerformed = 0
+
+        for b in self.Blocks:
+            b.Counter = 0
+
+# ----------------------------------------------------------------------------------------------
+
+    def print_blocks_counters(self):
+        """
+        Print all blocks counters.
+        """
+
+        print('Blocks counters:')
+
+        hc = float(self.Blocks[0].Counter)
+
+        for b in self.Blocks:
+            print('  Block {0} : cnt = {1:5}, prob = {2:8}'.format(b.Id,
+                                                                   b.Counter,
+                                                                   round(b.Counter / hc, 5)))
 
 # ==================================================================================================
