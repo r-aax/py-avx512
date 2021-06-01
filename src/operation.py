@@ -10,7 +10,7 @@ def operation_res_type(name):
     :return: operation result type
     """
 
-    if name in ['add-f', 'sub-f', 'mul-f', 'div-f', 'set-f', 'blend-f']:
+    if name in ['mov-f', 'add-f', 'sub-f', 'mul-f', 'div-f', 'set-f', 'blend-f']:
         return 'f'
     elif name in ['cmpgt-f', 'cmplt-f', 'cmpge-f', 'cmple-f', 'and-m']:
         return 'm'
@@ -44,7 +44,11 @@ class Operation:
         self.Pred = pred
         self.ZFlag = zflag
 
-        if name == 'add-f':
+        if name == 'mov-f':
+            self.check_operation_arith1_f()
+            self.Type = 'arith1'
+            self.Fun = lambda a: a
+        elif name == 'add-f':
             self.check_operation_arith2_f()
             self.Type = 'arith2'
             self.Fun = lambda a, b: a + b
@@ -87,6 +91,16 @@ class Operation:
             self.Type = 'jump'
         else:
             raise Exception('Unknown operation name {0}.'.format(name))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def check_operation_arith1_f(self):
+        """
+        Check operation arith2 with float arguments.
+        """
+        self.check_operation(args_count=1,
+                             args_types=['f'], res_type='f',
+                             allow_zflag=True)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -179,7 +193,10 @@ class Operation:
         if self.Type == 'set':
             args_str = '{0}'.format(self.Args[0])
         elif self.Type == 'jump':
-            args_str = '[{0} = {1}]'.format(self.Args[0].str_s(), self.Args[1])
+            if self.Args[0] is None:
+                args_str = ''
+            else:
+                args_str = '[{0} = {1}]'.format(self.Args[0].str_s(), self.Args[1])
         else:
             args_str = ', '.join([a.str_s() for a in self.Args])
 
@@ -197,9 +214,14 @@ class Operation:
             res_str = ''
 
         # Print.
-        print('{0:2}. {1}{2} : {3}{4} -> {5}'.format(self.Id,
-                                                     self.Name, self.zflag_str(),
-                                                     args_str, pred_str, res_str))
+        if (self.Name == 'jump') and (self.Args[0] is None):
+            print('{0:2}. {1}{2} -> {3}'.format(self.Id,
+                                                self.Name, self.zflag_str(),
+                                                res_str))
+        else:
+            print('{0:2}. {1}{2} : {3}{4} -> {5}'.format(self.Id,
+                                                         self.Name, self.zflag_str(),
+                                                         args_str, pred_str, res_str))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -215,8 +237,11 @@ class Operation:
         if self.Type == 'set':
             print('    a | {0}'.format(self.Args[0]))
         elif self.Type == 'jump':
-            print('    a | {0}'.format(self.Args[0].str_l()))
-            print('      | {0}'.format(self.Args[1]))
+            if self.Args[0] is None:
+                pass
+            else:
+                print('    a | {0}'.format(self.Args[0].str_l()))
+                print('      | {0}'.format(self.Args[1]))
         else:
             for i in range(len(self.Args)):
                 print('    a | {0}'.format(self.Args[i].str_l()))
@@ -267,7 +292,12 @@ class Operation:
         :param i: positions of vector elements
         """
 
-        if self.Type == 'arith2':
+        if self.Type == 'arith1':
+            if self.is_perform_operation(i):
+                self.Res[i] = self.Fun(self.Args[0][i])
+            elif self.is_zero_result():
+                self.Res.zero_element(i)
+        elif self.Type == 'arith2':
             if self.is_perform_operation(i):
                 self.Res[i] = self.Fun(self.Args[0][i], self.Args[1][i])
             elif self.is_zero_result():

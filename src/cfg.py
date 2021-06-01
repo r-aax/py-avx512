@@ -124,7 +124,10 @@ class CFG:
 
             # Process jump with special case.
             if oper.Type == 'jump':
-                if oper.Args[0][i] == oper.Args[1]:
+                if oper.Args[0] is None:
+                    block = oper.Res
+                    oper_index = 0
+                elif oper.Args[0][i] == oper.Args[1]:
                     block = oper.Res
                     oper_index = 0
                 else:

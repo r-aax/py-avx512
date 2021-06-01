@@ -39,7 +39,7 @@ def sample_guessp_cfg():
     # Output parameters.
     pm = cfg.alloc_zmm('f')
 
-    # First block, before jumps.
+    # b0
     b0 = cfg.alloc_block()
     quser = b0.op('set-f', [2.0])
     cup = b0.op('mul-f',
@@ -74,6 +74,11 @@ def sample_guessp_cfg():
     b2 = cfg.alloc_block()
     b0.jump(b1_pred, True, b1)
     b0.jump(b1_pred, False, b2)
+
+    # b1
+    b1.add_operation(Operation('mov-f', [ppv], pm))
+    b3 = cfg.alloc_block()
+    b1.jump(None, None, b3)
 
     return cfg
 
