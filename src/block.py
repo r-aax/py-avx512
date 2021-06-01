@@ -60,6 +60,19 @@ class Block:
 
     # ----------------------------------------------------------------------------------------------
 
+    def jump(self, pred, value, block):
+        """
+        Add operation jump with given predicate to some block.
+
+        :param pred: predicate
+        :param value: value
+        :param block: target block
+        """
+
+        self.add_operation(Operation('jump', [pred, value], block))
+
+    # ----------------------------------------------------------------------------------------------
+
     def id_str(self):
         """
         String representation.

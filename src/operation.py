@@ -12,7 +12,7 @@ def operation_res_type(name):
 
     if name in ['add-f', 'sub-f', 'mul-f', 'div-f', 'set-f', 'blend-f']:
         return 'f'
-    elif name in ['cmpgt-f', 'cmplt-f']:
+    elif name in ['cmpgt-f', 'cmplt-f', 'cmpge-f', 'cmple-f', 'and-m']:
         return 'm'
     else:
         raise Exception('Unexpected operation name in '
@@ -68,10 +68,21 @@ class Operation:
             self.check_operation_cmp_f()
             self.Type = 'cmp'
             self.Fun = lambda a, b: a < b
+        elif name == 'cmpge-f':
+            self.check_operation_cmp_f()
+            self.Type = 'cmp'
+            self.Fun = lambda a, b: a >= b
+        elif name == 'cmple-f':
+            self.check_operation_cmp_f()
+            self.Type = 'cmp'
+            self.Fun = lambda a, b: a <= b
         elif name == 'set-f':
             self.Type = 'set'
         elif name == 'blend-f':
             self.Type = 'blend'
+        elif name == 'and-m':
+            self.Type = 'mask'
+            self.Fun = lambda a, b: a and b
         elif name == 'jump':
             self.Type = 'jump'
         else:
@@ -273,6 +284,8 @@ class Operation:
                 self.Res[i] = self.Args[0][i]
             else:
                 self.Res[i] = self.Args[1][i]
+        elif self.Type == 'mask':
+            self.Res[i] = self.Fun(self.Args[0][i], self.Args[1][i])
         else:
             raise Exception('Unknown operation type.')
 

@@ -65,6 +65,15 @@ def sample_guessp_cfg():
     pmin = b0.op('blend-f', [pl, pr], b0.op('cmplt-f', [pl, pr]))
     pmax = b0.op('blend-f', [pl, pr], b0.op('cmpgt-f', [pl, pr]))
     qmax = b0.op('div-f', [pmax, pmin])
+    b1_pred = b0.op('and-m',
+                    [b0.op('and-m',
+                           [b0.op('cmple-f', [qmax, quser]),
+                            b0.op('cmple-f', [pmin, ppv])]),
+                     b0.op('cmple-f', [ppv, pmax])])
+    b1 = cfg.alloc_block()
+    b2 = cfg.alloc_block()
+    b0.jump(b1_pred, True, b1)
+    b0.jump(b1_pred, False, b2)
 
     return cfg
 
