@@ -35,7 +35,7 @@ class Graph:
         :return: New node.
         """
 
-        node = Node()
+        node = Node(self)
         node.Id = len(self.Nodes)
         self.Nodes.append(node)
 

@@ -5,12 +5,10 @@ Test file.
 from cfg.graph import Graph
 from cfg.node import Node
 from cfg.edge import Edge
+from cfg.parser import Parser
 
 # ==================================================================================================
-
-
-if __name__ == '__main__':
-
+def case_001_build_manual():
     # Build CFG manually.
     cfg = Graph()
     node0 = cfg.new_node()
@@ -31,5 +29,14 @@ if __name__ == '__main__':
 
     # Print.
     cfg.print()
+
+# ==================================================================================================
+def case_002_parser_parse():
+    parser=Parser()
+    parser.parse('cases/001_if.c').print()
+
+if __name__ == '__main__':
+    #case_001_build_manual()
+    case_002_parser_parse()
 
 # ==================================================================================================

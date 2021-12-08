@@ -2,6 +2,7 @@
 Control flow graph node realization.
 """
 
+
 # ==================================================================================================
 
 
@@ -9,10 +10,11 @@ class Node:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self):
+    def __init__(self, graph):
         """
         Constructor.
         """
+        self.Graph = graph
 
         # Identifier.
         self.Id = None
