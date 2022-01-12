@@ -9,6 +9,9 @@ from cfg.edge import Edge
 
 
 class Graph:
+    """
+    Graph class.
+    """
 
     # ----------------------------------------------------------------------------------------------
 
@@ -16,6 +19,9 @@ class Graph:
         """
         Constructor.
         """
+
+        # Next oper id.
+        self._NextOperId = 0
 
         # All nodes.
         self.Nodes = []
@@ -31,8 +37,12 @@ class Graph:
 
     def new_node(self):
         """
-        Adding new node.
-        :return: New node.
+        Add new node.
+
+        Returns
+        -------
+        node : Node
+            Added new node.
         """
 
         node = Node(self)
@@ -45,10 +55,19 @@ class Graph:
 
     def add_edge(self, pred, succ):
         """
-        Add edge.
-        :param pred: Predecessor.
-        :param succ: Successor.
-        :return: New edge.
+        Add new edge.
+
+        Parameters
+        ----------
+        pred : Node
+            Predecessor node.
+        succ : Node
+            Successor node.
+
+        Returns
+        -------
+        edge : Edge
+            New added edge.
         """
 
         edge = Edge(pred, succ)
@@ -70,5 +89,23 @@ class Graph:
         for node in self.Nodes:
             print('')
             node.print()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def next_oper_id(self):
+        """
+        Next operation identifier.
+
+        Returns
+        -------
+        oper_id : int
+            Next operation identifier.
+        """
+
+        res = self._NextOperId
+
+        self._NextOperId += 1
+
+        return res
 
 # ==================================================================================================

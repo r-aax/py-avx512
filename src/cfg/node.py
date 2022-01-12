@@ -7,13 +7,22 @@ Control flow graph node realization.
 
 
 class Node:
+    """
+    Node class.
+    """
 
     # ----------------------------------------------------------------------------------------------
 
     def __init__(self, graph):
         """
         Constructor.
+
+        Parameters
+        ----------
+        graph : Graph
+            Graph.
         """
+
         self.Graph = graph
 
         # Identifier.
@@ -35,9 +44,9 @@ class Node:
 
         # Head.
         sf = ''
-        if self.IEdges == []:
+        if not self.IEdges:
             sf = ' (Start)'
-        elif self.OEdges == []:
+        elif not self.OEdges:
             sf = ' (Stop)'
         print('CFG Node {0}{1}:'.format(self.Id, sf))
 

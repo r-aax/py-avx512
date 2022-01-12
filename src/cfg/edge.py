@@ -6,14 +6,22 @@ Control flow graph edge realization.
 
 
 class Edge:
+    """
+    Edge class.
+    """
 
     # ----------------------------------------------------------------------------------------------
 
     def __init__(self, pred, succ):
         """
         Constructor.
-        :param pred: Predecessor.
-        :param succ: Successor.
+
+        Parameters
+        ----------
+        pred : Node
+            Predecessor node.
+        succ : Node
+            Successor node.
         """
 
         # Operation.
@@ -32,7 +40,11 @@ class Edge:
     def __str__(self):
         """
         String representation.
-        :return: String.
+
+        Returns
+        -------
+        string : str
+            String representation.
         """
 
         return '[{0} -> {1}]'.format(self.Pred.Id, self.Succ.Id)
