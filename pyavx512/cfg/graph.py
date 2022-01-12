@@ -9,7 +9,7 @@ import cfg
 
 class Graph:
     """
-    Graph class.
+    Control flow graph class.
     """
 
     # ----------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class Graph:
 
     # ----------------------------------------------------------------------------------------------
 
-    def add_edge(self, pred, succ):
+    def new_edge(self, pred, succ):
         """
         Add new edge.
 
@@ -84,6 +84,23 @@ class Graph:
         self.Edges.append(edge)
 
         return edge
+
+    # ----------------------------------------------------------------------------------------------
+
+    def new_oper_id(self):
+        """
+        Get identifier for new operation.
+
+        Returns
+        -------
+        id : int
+            Identifier for new operation.
+        """
+
+        if not self.Opers:
+            return 0
+        else:
+            return max([oper.Id for oper in self.Opers]) + 1
 
     # ----------------------------------------------------------------------------------------------
 
