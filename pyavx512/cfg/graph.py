@@ -2,8 +2,7 @@
 Control flow graph realization.
 """
 
-from cfg.node import Node
-from cfg.edge import Edge
+import cfg
 
 # ==================================================================================================
 
@@ -20,18 +19,28 @@ class Graph:
         Constructor.
         """
 
-        # Next oper id.
-        self._NextOperId = 0
-
         # All nodes.
         self.Nodes = []
 
-        # Start and stop nodes.
-        self.Start = None
-        self.Stop = None
-
         # All edges.
         self.Edges = []
+
+    # ----------------------------------------------------------------------------------------------
+
+    def new_node_id(self):
+        """
+        Get identifier for new node.
+
+        Returns
+        -------
+        id : int
+            Identifier for new node.
+        """
+
+        if not self.Nodes:
+            return 0
+        else:
+            return max([n.Id for n in self.Nodes]) + 1
 
     # ----------------------------------------------------------------------------------------------
 
@@ -45,8 +54,7 @@ class Graph:
             Added new node.
         """
 
-        node = Node(self)
-        node.Id = len(self.Nodes)
+        node = cfg.Node(self)
         self.Nodes.append(node)
 
         return node
@@ -70,7 +78,7 @@ class Graph:
             New added edge.
         """
 
-        edge = Edge(pred, succ)
+        edge = cfg.Edge(pred, succ)
         pred.OEdges.append(edge)
         succ.IEdges.append(edge)
         self.Edges.append(edge)
@@ -89,23 +97,5 @@ class Graph:
         for node in self.Nodes:
             print('')
             node.print()
-
-    # ----------------------------------------------------------------------------------------------
-
-    def next_oper_id(self):
-        """
-        Next operation identifier.
-
-        Returns
-        -------
-        oper_id : int
-            Next operation identifier.
-        """
-
-        res = self._NextOperId
-
-        self._NextOperId += 1
-
-        return res
 
 # ==================================================================================================

@@ -3,7 +3,6 @@ Test file.
 """
 
 import cfg
-import du
 
 # ==================================================================================================
 
@@ -17,30 +16,19 @@ def case_001_build_manual():
 
     # Node 0.
     n0 = g.new_node()
-    n0.Opers = []
+    n0.Opers = [' 2. load a -> v0', ' 3. load b -> v1', ' 4. p0 = v0 > v1', ' 5. jump p0', ' 6. jump ~p0']
 
     # Node 1.
     n1 = g.new_node()
-    n1.Opers = [' 1. BEGIN', ' 2. P0 = a > b', ' 3. JUMP P0==T', ' 4. JUMP P0=F', ' 5. END']
+    n1.Opers = [' 9. v2 = v0 + v1', ' 8. store v2 -> c']
 
     # Node 2.
     n2 = g.new_node()
-    n2.Opers = [' 6. BEGIN', ' 7. V0 = a + b', ' 8. R = V0', ' 9. END']
-
-    # Node 3.
-    n3 = g.new_node()
-    n3.Opers = ['10. BEGIN', '11. V1 = a - b', '12. R = V1', '13. END']
-
-    # Node 4.
-    n4 = g.new_node()
-    n4.Opers = []
+    n2.Opers = ['11. v3 = v0 - v1', '12. store v3 -> c']
 
     # Add edges.
     g.add_edge(n0, n1)
-    g.add_edge(n1, n2)
-    g.add_edge(n1, n3)
-    g.add_edge(n2, n4)
-    g.add_edge(n3, n4)
+    g.add_edge(n0, n2)
 
     # Print.
     g.print()

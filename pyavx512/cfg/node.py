@@ -26,14 +26,11 @@ class Node:
         self.Graph = graph
 
         # Identifier.
-        self.Id = None
+        self.Id = graph.new_node_id()
 
         # Input and output edges list.
         self.IEdges = []
         self.OEdges = []
-
-        # Operations.
-        self.Opers = []
 
     # ----------------------------------------------------------------------------------------------
 
@@ -43,12 +40,7 @@ class Node:
         """
 
         # Head.
-        sf = ''
-        if not self.IEdges:
-            sf = ' (Start)'
-        elif not self.OEdges:
-            sf = ' (Stop)'
-        print('CFG Node {0}{1}:'.format(self.Id, sf))
+        print('CFG Node {0}:'.format(self.Id))
 
         # Opers.
         for oper in self.Opers:

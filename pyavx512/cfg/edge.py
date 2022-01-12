@@ -24,11 +24,6 @@ class Edge:
             Successor node.
         """
 
-        # Operation.
-        # TODO:
-        #   Here we need reference to operation.
-        self.Oper = None
-
         # Predecessor node.
         self.Pred = pred
 

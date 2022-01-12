@@ -1,11 +1,11 @@
-float fun(float a, float b)
+float fun(float a, float b, float &c)
 {
     if (a > b)
     {
-        return a + b;
+        c = a + b;
     }
     else
     {
-        return a - b;
+        c = a - b;
     }
 }
