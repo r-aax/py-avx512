@@ -87,29 +87,10 @@ class Graph:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_oper_id(self):
-        """
-        Get identifier for new operation.
-
-        Returns
-        -------
-        id : int
-            Identifier for new operation.
-        """
-
-        if not self.Opers:
-            return 0
-        else:
-            return max([oper.Id for oper in self.Opers]) + 1
-
-    # ----------------------------------------------------------------------------------------------
-
     def print(self):
         """
         Print CFG graph.
         """
-
-        print('CFG Graph:')
 
         for node in self.Nodes:
             print('')

@@ -20,7 +20,7 @@ class Node:
         Parameters
         ----------
         graph : cfg.Graph
-            Intermediate representation - CFG.
+            Graph.
         """
 
         self.Graph = graph

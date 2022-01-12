@@ -12,7 +12,9 @@ def case_001_build_manual():
     Build case_001 inner representation manually.
     """
 
-    g = sem.IR().CFG
+    ir = sem.IR()
+    g = ir.CFG
+    ir.set_in_out_params(['a', 'b'], ['c'])
 
     # Node 0.
     n0 = g.new_node()
@@ -31,7 +33,7 @@ def case_001_build_manual():
     g.new_edge(n0, n2)
 
     # Print.
-    g.print()
+    ir.print()
 
 # ==================================================================================================
 
@@ -41,7 +43,7 @@ def case_001_parser_parse():
     Build case_001 with parser.
     """
 
-    parser = ir.Parser()
+    parser = sem.Parser()
     parser.parse('cases/001_if.c').print()
 
 # ==================================================================================================
