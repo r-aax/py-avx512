@@ -2,6 +2,7 @@
 Intermediate representation.
 """
 
+import sem
 import cfg
 
 # ==================================================================================================
@@ -28,8 +29,8 @@ class IR:
         # Out params.
         self.OutParams = []
 
-        # Virtual registers.
-        self.VRegs = []
+        # Registers.
+        self.Regs = []
 
         # Predicates.
         self.Predicates = []
@@ -54,42 +55,143 @@ class IR:
             List of output parameters.
         """
 
-        self.InParams = in_params
-        self.OutParams = out_params
+        self.InParams = [sem.Operand('i', name) for name in in_params]
+        self.OutParams = [sem.Operand('o', name) for name in out_params]
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_vreg_num(self):
+    def new_reg_num(self):
         """
-        Get number for new virtual register.
+        Get number for new register.
 
         Returns
         -------
         id : int
-            Identifier for new virtual register.
+            Number for new register.
         """
 
-        if not self.VRegs:
+        if not self.Regs:
             return 0
         else:
-            return max([vreg.Num for vreg in self.VRegs]) + 1
+            return max([r.Num for r in self.Regs]) + 1
 
     # ----------------------------------------------------------------------------------------------
 
     def new_predicate_num(self):
         """
-        Get number for new virtual register.
+        Get number for new predicate.
 
         Returns
         -------
         id : int
-            Identifier for new virtual register.
+            Identifier for new predicate.
         """
 
-        if not self.VRegs:
+        if not self.Predicates:
             return 0
         else:
-            return max([vreg.Num for vreg in self.VRegs]) + 1
+            return max([p.Num for p in self.Predicates]) + 1
+
+    # ----------------------------------------------------------------------------------------------
+
+    def in_param(self, name):
+        """
+        Get input param.
+
+        Parameters
+        ----------
+        name : string
+            Input param.
+
+        Returns
+        -------
+        param : Operand.
+            Input param.
+        """
+
+        for in_par in self.InParams:
+            if in_par.Val == name:
+                return in_par
+
+        raise Exception(f'py-avx512 : no input param{name}')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def out_param(self, name):
+        """
+        Get output param.
+
+        Parameters
+        ----------
+        name : string
+            Output param.
+
+        Returns
+        -------
+        param : Operand.
+            Output param.
+        """
+
+        for out_par in self.OutParams:
+            if out_par.Val == name:
+                return out_par
+
+        raise Exception(f'py-avx512 : no output param{name}')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def new_reg(self):
+        """
+        Get new register.
+
+        Returns
+        -------
+        reg : Operand
+            Register.
+        """
+
+        r = sem.Operand('r', self.new_reg_num())
+        self.Regs.append(r)
+
+        return r
+
+    # ----------------------------------------------------------------------------------------------
+
+    def new_predicate(self):
+        """
+        Get new predicate.
+
+        Returns
+        -------
+        predicate : Operand
+            Predicate.
+        """
+
+        p = sem.Operand('p', self.new_predicate_num())
+        self.Predicates.append(p)
+
+        return p
+
+    # ----------------------------------------------------------------------------------------------
+
+    def new_constant(self, val):
+        """
+        Get new constant.
+
+        Parameters
+        ----------
+        val : number
+            Constant.
+
+        Returns
+        -------
+            New constant operand.
+        """
+
+        c = sem.Operand('c', val)
+        self.Constants.append(c)
+
+        return c
 
     # ----------------------------------------------------------------------------------------------
 
@@ -107,6 +209,38 @@ class IR:
             return 0
         else:
             return max([oper.Id for oper in self.Opers]) + 1
+
+    # ----------------------------------------------------------------------------------------------
+
+    def new_oper(self, name, args=[], res=None, predicate=None, is_invert_predicate=False):
+        """
+        Create new oper.
+
+        Parameters
+        ----------
+        name : str
+            Name.
+        args : list
+            Arguments.
+        res : Operand
+            Result.
+        predicate :
+            Predicate.
+
+        Returns
+        -------
+            Operation.
+        """
+
+        oper = sem.Oper(self)
+        oper.Name = name
+        oper.Args = args
+        oper.Res = res
+        oper.Predicate = predicate
+        oper.IsInvertPredicate = is_invert_predicate
+        self.Opers.append(oper)
+
+        return oper
 
     # ----------------------------------------------------------------------------------------------
 
