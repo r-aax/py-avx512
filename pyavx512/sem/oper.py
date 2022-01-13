@@ -30,8 +30,8 @@ class Oper:
         # Operation can have several arguments, one result and one predicate.
         self.Args = []
         self.Result = None
-        self.Predicate = None
-        self.IsInvertPredicate = False
+        self.Predct = None
+        self.PredctV = True
 
     # ----------------------------------------------------------------------------------------------
 
@@ -56,12 +56,12 @@ class Oper:
             res_str = '-> {0:>4}'.format(str(self.Res))
         else:
             res_str = ''
-        if self.Predicate:
-            if self.IsInvertPredicate:
+        if self.Predct:
+            if not self.PredctV:
                 s = '!'
             else:
                 s = ' '
-            tmp = '{0}{1}'.format(s, str(self.Predicate))
+            tmp = '{0}{1}'.format(s, str(self.Predct))
             predct_str = '? {0:>4}'.format(tmp)
         else:
             predct_str =''
@@ -84,12 +84,9 @@ class Oper:
         if not self.Name == 'jump':
             return False
 
-        if self.Predicate is None:
+        if self.Predct is None:
             return True
 
-        if not self.IsInvertPredicate:
-            return self.Predicate.RuntimeVal
-        else:
-            return not self.Predicate.RuntimeVal
+        return self.PredctV == self.Predct.RuntimeVal
 
 # ==================================================================================================

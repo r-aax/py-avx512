@@ -23,8 +23,8 @@ def case_001_build_manual():
     v0 = ir.load('a')
     v1 = ir.load('b')
     p0 = ir.cmpge(v0, v1)
-    ir.jump(n1, p0, False)
-    ir.jump(n2, p0, True)
+    ir.jump(n1, p0, True)
+    ir.jump(n2, p0, False)
     #
     ir.set_cur_node(n1)
     ir.store(ir.add(v0, v1), 'c')

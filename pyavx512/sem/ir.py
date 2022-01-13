@@ -229,7 +229,7 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_oper(self, name, args=[], res=None, predct=None, is_predct_inv=False):
+    def new_oper(self, name, args=[], res=None, predct=None, predct_v=True):
         """
         Create new oper.
 
@@ -241,8 +241,10 @@ class IR:
             Arguments.
         res : Operand
             Result.
-        predicate :
+        predct : sem.Operand
             Predicate.
+        predct_v : Bool
+            Value of predct to jump.
 
         Returns
         -------
@@ -255,8 +257,8 @@ class IR:
         oper.Res = res
         if res:
             res.Producer = oper
-        oper.Predicate = predct
-        oper.IsInvertPredicate = is_predct_inv
+        oper.Predct = predct
+        oper.PredctV = predct_v
         self.Opers.append(oper)
         self.CurNode.Opers.append(oper)
 
@@ -264,7 +266,7 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def load(self, src, predct=None, is_predct_inv=False):
+    def load(self, src, predct=None, predct_v=True):
         """
         Create load operation.
 
@@ -274,8 +276,8 @@ class IR:
             Source of load.
         predct : sem.Operand
             Predicate.
-        is_predct_inv : Bool
-            Is predicate inversed.
+        predct_v : Bool
+            Value of predct to jump.
 
         Returns
         -------
@@ -285,13 +287,13 @@ class IR:
         res = self.new_reg()
 
         self.new_oper('load', args=[self.in_param(src)],
-                      res=res, predct=predct, is_predct_inv=is_predct_inv)
+                      res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def store(self, v, dst, predct=None, is_predct_inv=False):
+    def store(self, v, dst, predct=None, predct_v=True):
         """
         Create load operation.
 
@@ -303,16 +305,16 @@ class IR:
             Destination.
         predct : sem.Operand
             Predicate.
-        is_predct_inv : Bool
-            Is predicate inversed.
+        predct_v : Bool
+            Value of predct to jump.
         """
 
         self.new_oper('store', args=[v, self.out_param(dst)],
-                      predct=predct, is_predct_inv=is_predct_inv)
+                      predct=predct, predct_v=predct_v)
 
     # ----------------------------------------------------------------------------------------------
 
-    def add(self, v1, v2, predct=None, is_predct_inv=False):
+    def add(self, v1, v2, predct=None, predct_v=True):
         """
         Create add operation.
 
@@ -324,8 +326,8 @@ class IR:
             Second operand.
         predct : sem.Operand
             Predicate.
-        is_predct_inv : Bool
-            Is predicate inversed.
+        predct_v : Bool
+            Value of predct to jump.
 
         Returns
         -------
@@ -335,13 +337,13 @@ class IR:
         res = self.new_reg()
 
         self.new_oper('add', args=[v1, v2],
-                      res=res, predct=predct, is_predct_inv=is_predct_inv)
+                      res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def sub(self, v1, v2, predct=None, is_predct_inv=False):
+    def sub(self, v1, v2, predct=None, predct_v=True):
         """
         Create sub operation.
 
@@ -353,8 +355,8 @@ class IR:
             Second operand.
         predct : sem.Operand
             Predicate.
-        is_predct_inv : Bool
-            Is predicate inversed.
+        predct_v : Bool
+            Value of predct to jump.
 
         Returns
         -------
@@ -364,13 +366,13 @@ class IR:
         res = self.new_reg()
 
         self.new_oper('sub', args=[v1, v2],
-                      res=res, predct=predct, is_predct_inv=is_predct_inv)
+                      res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def cmpge(self, v1, v2, predct=None, is_predct_inv=False):
+    def cmpge(self, v1, v2, predct=None, predct_v=True):
         """
         Create cmpge operation.
 
@@ -382,8 +384,8 @@ class IR:
             Second operand.
         predct : sem.Operand
             Predicate.
-        is_predct_inv : Bool
-            Is predicate inversed.
+        predct_v : Bool
+            Value of predct to jump.
 
         Returns
         -------
@@ -393,13 +395,13 @@ class IR:
         res = self.new_predicate()
 
         self.new_oper('cmpge', args=[v1, v2],
-                      res=res, predct=predct, is_predct_inv=is_predct_inv)
+                      res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def jump(self, target_node, predct=None, is_predct_inv=False):
+    def jump(self, target_node, predct=None, predct_v=True):
         """
         Create jump operation.
 
@@ -413,7 +415,7 @@ class IR:
             Is predicate inversed.
         """
 
-        self.new_oper('jump', predct=predct, is_predct_inv=is_predct_inv)
+        self.new_oper('jump', predct=predct, predct_v=predct_v)
         self.CFG.new_edge(self.CurNode, target_node, self.CurNode.LastOper)
 
     # ----------------------------------------------------------------------------------------------
