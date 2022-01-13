@@ -27,6 +27,36 @@ class Graph:
 
     # ----------------------------------------------------------------------------------------------
 
+    @property
+    def StartNode(self):
+        """
+        Get start node.
+
+        Returns
+        -------
+        node : cfg.Node
+            Start node.
+        """
+
+        return self.Nodes[0]
+
+    # ----------------------------------------------------------------------------------------------
+
+    @property
+    def StopNode(self):
+        """
+        Get stop node.
+
+        Returns
+        -------
+        node : cfg.Node
+            Stop node.
+        """
+
+        return self.Nodes[-1]
+
+    # ----------------------------------------------------------------------------------------------
+
     def new_node_id(self):
         """
         Get identifier for new node.

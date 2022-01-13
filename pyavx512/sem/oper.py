@@ -68,4 +68,28 @@ class Oper:
 
         return f'{id_str} {name_str} {args_str:12} {res_str:7} {predct_str:8}'
 
+    # ----------------------------------------------------------------------------------------------
+
+    def is_runtime_jump(self):
+        """
+        Check if oper is jump.
+
+        Returns
+        -------
+        is_jump : Bool
+            True - if oper is jump,
+            False - otherwinse.
+        """
+
+        if not self.Name == 'jump':
+            return False
+
+        if self.Predicate is None:
+            return True
+
+        if not self.IsInvertPredicate:
+            return self.Predicate.RuntimeVal
+        else:
+            return not self.Predicate.RuntimeVal
+
 # ==================================================================================================
