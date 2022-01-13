@@ -399,12 +399,14 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def jump(self, predct=None, is_predct_inv=False):
+    def jump(self, target_node, predct=None, is_predct_inv=False):
         """
         Create jump operation.
 
         Parameters
         ----------
+        target_node : cfg.Node
+            Node to jump.
         predct : sem.Operand
             Predicate.
         is_predct_inv : Bool
@@ -412,6 +414,7 @@ class IR:
         """
 
         self.new_oper('jump', predct=predct, is_predct_inv=is_predct_inv)
+        self.CFG.new_edge(self.CurNode, target_node, self.CurNode.LastOper)
 
     # ----------------------------------------------------------------------------------------------
 

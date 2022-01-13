@@ -23,20 +23,14 @@ def case_001_build_manual():
     v0 = ir.load('a')
     v1 = ir.load('b')
     p0 = ir.cmpge(v0, v1)
-    ir.jump(p0, False)
-    op3 = n0.LastOper
-    ir.jump(p0, True)
-    op4 = n0.LastOper
+    ir.jump(n1, p0, False)
+    ir.jump(n2, p0, True)
     #
     ir.set_cur_node(n1)
     ir.store(ir.add(v0, v1), 'c')
     #
     ir.set_cur_node(n2)
     ir.store(ir.sub(v0, v1), 'c')
-
-    # Add edges.
-    g.new_edge(n0, n1, op3)
-    g.new_edge(n0, n2, op4)
 
     # Print.
     ir.print()
