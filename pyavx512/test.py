@@ -18,20 +18,21 @@ def case_001_build_manual():
     ir.set_in_out_params(['a', 'b'], ['c'])
     n0, n1, n2 = g.new_node(), g.new_node(), g.new_node()
 
-    # Node 0.
-    v0 = ir.load(n0, 'a')
-    v1 = ir.load(n0, 'b')
-    p0 = ir.cmpge(n0, v0, v1)
-    ir.jump(n0, p0, False)
+    # Semantic.
+    ir.set_cur_node(n0)
+    v0 = ir.load('a')
+    v1 = ir.load('b')
+    p0 = ir.cmpge(v0, v1)
+    ir.jump(p0, False)
     op3 = n0.LastOper
-    ir.jump(n0, p0, True)
+    ir.jump(p0, True)
     op4 = n0.LastOper
-
-    # Node 1.
-    ir.store(n1, ir.add(n1, v0, v1), 'c')
-
-    # Node 2.
-    ir.store(n2, ir.sub(n2, v0, v1), 'c')
+    #
+    ir.set_cur_node(n1)
+    ir.store(ir.add(v0, v1), 'c')
+    #
+    ir.set_cur_node(n2)
+    ir.store(ir.sub(v0, v1), 'c')
 
     # Add edges.
     g.new_edge(n0, n1, op3)

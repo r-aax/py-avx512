@@ -41,6 +41,9 @@ class IR:
         # Operations list.
         self.Opers = []
 
+        # Node in which operations are created in this moment.
+        self.CurNode = None
+
     # ----------------------------------------------------------------------------------------------
 
     def set_in_out_params(self, in_params, out_params):
@@ -57,6 +60,20 @@ class IR:
 
         self.InParams = [sem.Operand('i', name) for name in in_params]
         self.OutParams = [sem.Operand('o', name) for name in out_params]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_cur_node(self, node):
+        """
+        Set current node.
+
+        Parameters
+        ----------
+        node : cfg.Node
+            Node.
+        """
+
+        self.CurNode = node
 
     # ----------------------------------------------------------------------------------------------
 
@@ -212,14 +229,12 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_oper(self, cfg_node, name, args=[], res=None, predct=None, is_predct_inv=False):
+    def new_oper(self, name, args=[], res=None, predct=None, is_predct_inv=False):
         """
         Create new oper.
 
         Parameters
         ----------
-        cfg_node : cfg.Node
-            Node.
         name : str
             Name.
         args : list
@@ -243,20 +258,18 @@ class IR:
         oper.Predicate = predct
         oper.IsInvertPredicate = is_predct_inv
         self.Opers.append(oper)
-        cfg_node.Opers.append(oper)
+        self.CurNode.Opers.append(oper)
 
         return oper.Res
 
     # ----------------------------------------------------------------------------------------------
 
-    def load(self, node, src, predct=None, is_predct_inv=False):
+    def load(self, src, predct=None, is_predct_inv=False):
         """
         Create load operation.
 
         Parameters
         ----------
-        node : cfg.Node
-            Node.
         src : sem.Operand
             Source of load.
         predct : sem.Operand
@@ -271,21 +284,19 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper(node, 'load', args=[self.in_param(src)],
+        self.new_oper('load', args=[self.in_param(src)],
                       res=res, predct=predct, is_predct_inv=is_predct_inv)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def store(self, node, v, dst, predct=None, is_predct_inv=False):
+    def store(self, v, dst, predct=None, is_predct_inv=False):
         """
         Create load operation.
 
         Parameters
         ----------
-        node : cfg.Node
-            Node.
         v : sem.Operand
             Value.
         dst : sem.Operand
@@ -296,19 +307,17 @@ class IR:
             Is predicate inversed.
         """
 
-        self.new_oper(node, 'store', args=[v, self.out_param(dst)],
+        self.new_oper('store', args=[v, self.out_param(dst)],
                       predct=predct, is_predct_inv=is_predct_inv)
 
     # ----------------------------------------------------------------------------------------------
 
-    def add(self, node, v1, v2, predct=None, is_predct_inv=False):
+    def add(self, v1, v2, predct=None, is_predct_inv=False):
         """
         Create add operation.
 
         Parameters
         ----------
-        node : cfg.Node
-            Node.
         v1 : sem.Operand
             First operand.
         v2 : sem.Operand
@@ -325,21 +334,19 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper(node, 'add', args=[v1, v2],
+        self.new_oper('add', args=[v1, v2],
                       res=res, predct=predct, is_predct_inv=is_predct_inv)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def sub(self, node, v1, v2, predct=None, is_predct_inv=False):
+    def sub(self, v1, v2, predct=None, is_predct_inv=False):
         """
         Create sub operation.
 
         Parameters
         ----------
-        node : cfg.Node
-            Node.
         v1 : sem.Operand
             First operand.
         v2 : sem.Operand
@@ -356,21 +363,19 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper(node, 'sub', args=[v1, v2],
+        self.new_oper('sub', args=[v1, v2],
                       res=res, predct=predct, is_predct_inv=is_predct_inv)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def cmpge(self, node, v1, v2, predct=None, is_predct_inv=False):
+    def cmpge(self, v1, v2, predct=None, is_predct_inv=False):
         """
         Create cmpge operation.
 
         Parameters
         ----------
-        node : cfg.Node
-            Node.
         v1 : sem.Operand
             First operand.
         v2 : sem.Operand
@@ -387,28 +392,26 @@ class IR:
 
         res = self.new_predicate()
 
-        self.new_oper(node, 'cmpge', args=[v1, v2],
+        self.new_oper('cmpge', args=[v1, v2],
                       res=res, predct=predct, is_predct_inv=is_predct_inv)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def jump(self, node, predct=None, is_predct_inv=False):
+    def jump(self, predct=None, is_predct_inv=False):
         """
         Create jump operation.
 
         Parameters
         ----------
-        node : cfg.Node
-            Node.
         predct : sem.Operand
             Predicate.
         is_predct_inv : Bool
             Is predicate inversed.
         """
 
-        self.new_oper(node, 'jump', predct=predct, is_predct_inv=is_predct_inv)
+        self.new_oper('jump', predct=predct, is_predct_inv=is_predct_inv)
 
     # ----------------------------------------------------------------------------------------------
 
