@@ -12,7 +12,7 @@ class Edge:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, pred, succ):
+    def __init__(self, pred, succ, jump):
         """
         Constructor.
 
@@ -22,6 +22,8 @@ class Edge:
             Predecessor node.
         succ : Node
             Successor node.
+        jump : Oper
+            Operation of jump.
         """
 
         # Predecessor node.
@@ -29,6 +31,9 @@ class Edge:
 
         # Successor node.
         self.Succ = succ
+
+        # Jump oper.
+        self.Jump = jump
 
     # ----------------------------------------------------------------------------------------------
 
@@ -42,6 +47,6 @@ class Edge:
             String representation.
         """
 
-        return '[{0} -> {1}]'.format(self.Pred.Id, self.Succ.Id)
+        return '[{0}. {1} -> {2}]'.format(self.Jump.Id, self.Pred.Id, self.Succ.Id)
 
 # ==================================================================================================

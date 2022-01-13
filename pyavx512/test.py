@@ -21,14 +21,12 @@ def case_001_build_manual():
     v0 = ir.new_reg()
     v1 = ir.new_reg()
     p0 = ir.new_predicate()
-    n0.Opers = \
-    [
-        ir.new_oper('load', [ir.in_param('a')], v0),
-        ir.new_oper('load', [ir.in_param('b')], v1),
-        ir.new_oper('cmpge', [v0, v1], p0),
-        ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=True),
-        ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
-    ]
+    op0 = ir.new_oper('load', [ir.in_param('a')], v0)
+    op1 = ir.new_oper('load', [ir.in_param('b')], v1)
+    op2 = ir.new_oper('cmpge', [v0, v1], p0)
+    op3 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
+    op4 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
+    n0.Opers = [op0, op1, op2, op3, op4]
 
     # Node 1.
     n1 = g.new_node()
@@ -51,8 +49,8 @@ def case_001_build_manual():
     ]
 
     # Add edges.
-    g.new_edge(n0, n1)
-    g.new_edge(n0, n2)
+    g.new_edge(n0, n1, op3)
+    g.new_edge(n0, n2, op4)
 
     # Print.
     ir.print()

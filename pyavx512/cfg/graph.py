@@ -61,7 +61,7 @@ class Graph:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_edge(self, pred, succ):
+    def new_edge(self, pred, succ, jump):
         """
         Add new edge.
 
@@ -71,6 +71,8 @@ class Graph:
             Predecessor node.
         succ : Node
             Successor node.
+        jump : Oper
+            Jump oper.
 
         Returns
         -------
@@ -78,7 +80,7 @@ class Graph:
             New added edge.
         """
 
-        edge = cfg.Edge(pred, succ)
+        edge = cfg.Edge(pred, succ, jump)
         pred.OEdges.append(edge)
         succ.IEdges.append(edge)
         self.Edges.append(edge)
