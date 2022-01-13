@@ -3,6 +3,7 @@ Test file.
 """
 
 import sem
+import tools
 
 # ==================================================================================================
 
@@ -24,8 +25,8 @@ def case_001_build_manual():
     op0 = ir.new_oper('load', [ir.in_param('a')], v0)
     op1 = ir.new_oper('load', [ir.in_param('b')], v1)
     op2 = ir.new_oper('cmpge', [v0, v1], p0)
-    op3 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
-    op4 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
+    op3 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
+    op4 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
     n0.Opers = [op0, op1, op2, op3, op4]
 
     # Node 1.
@@ -54,6 +55,11 @@ def case_001_build_manual():
 
     # Print.
     ir.print()
+
+    # Run emulator.
+    print('')
+    emu = tools.Emulator()
+    emu.run(ir, [])
 
 # ==================================================================================================
 

@@ -35,6 +35,9 @@ class Operand:
         # Producer (for result).
         self.Producer = None
 
+        # Value for runtime.
+        self.RuntimeVal = None
+
     # ----------------------------------------------------------------------------------------------
 
     def __repr__(self):
