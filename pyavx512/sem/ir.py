@@ -212,12 +212,14 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_oper(self, name, args=[], res=None, predicate=None, is_invert_predicate=False):
+    def new_oper(self, cfg_node, name, args=[], res=None, predicate=None, is_invert_predicate=False):
         """
         Create new oper.
 
         Parameters
         ----------
+        cfg_node : cfg.Node
+            Node.
         name : str
             Name.
         args : list
@@ -241,6 +243,7 @@ class IR:
         oper.Predicate = predicate
         oper.IsInvertPredicate = is_invert_predicate
         self.Opers.append(oper)
+        cfg_node.Opers.append(oper)
 
         return oper
 

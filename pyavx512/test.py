@@ -22,32 +22,25 @@ def case_001_build_manual():
     v0 = ir.new_reg()
     v1 = ir.new_reg()
     p0 = ir.new_predicate()
-    op0 = ir.new_oper('load', [ir.in_param('a')], v0)
-    op1 = ir.new_oper('load', [ir.in_param('b')], v1)
-    op2 = ir.new_oper('cmpge', [v0, v1], p0)
-    op3 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
-    op4 = ir.new_oper('jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
-    n0.Opers = [op0, op1, op2, op3, op4]
+    ir.new_oper(n0, 'load', [ir.in_param('a')], v0)
+    ir.new_oper(n0, 'load', [ir.in_param('b')], v1)
+    ir.new_oper(n0, 'cmpge', [v0, v1], p0)
+    op3 = ir.new_oper(n0, 'jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
+    op4 = ir.new_oper(n0, 'jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
 
     # Node 1.
     n1 = g.new_node()
     v2 = ir.new_reg()
-    n1.Opers = \
-    [
-        ir.new_oper('add', [v0, v1], v2),
-        ir.new_oper('store', [v2, ir.out_param('c')])
-    ]
+    ir.new_oper(n1, 'add', [v0, v1], v2),
+    ir.new_oper(n1, 'store', [v2, ir.out_param('c')])
 
     # Node 2.
     n2 = g.new_node()
     v3 = ir.new_reg()
-    n2.Opers = \
-    [
-        ir.new_oper('sub', [v0, v1], v3),
-        ir.new_oper('nop', []),
-        ir.new_oper('nop', []),
-        ir.new_oper('store', [v3, ir.out_param('c')])
-    ]
+    ir.new_oper(n2, 'sub', [v0, v1], v3),
+    ir.new_oper(n2, 'nop', []),
+    ir.new_oper(n2, 'nop', []),
+    ir.new_oper(n2, 'store', [v3, ir.out_param('c')])
 
     # Add edges.
     g.new_edge(n0, n1, op3)
