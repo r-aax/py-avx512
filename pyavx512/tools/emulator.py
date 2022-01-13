@@ -4,6 +4,7 @@ Emulator realization.
 
 # ==================================================================================================
 
+
 class Emulator:
     """
     Emulator.
@@ -40,11 +41,26 @@ class Emulator:
 
         print(f'tools:emulator : run {cases} cases with {data}')
 
+        out_data = dict()
+
         for i in range(cases):
+
             # Init runtime values for input parameters.
-            for ip in ir.InParams:
-                ip.RuntimeVal = data[ip.Id][i]
+            for in_p in ir.InParams:
+                in_p.RuntimeVal = data[in_p.Id][i]
+
             self.single_run(ir)
+
+            # Get output runtime values.
+            for out_p in ir.OutParams:
+                if out_data.get(out_p.Id) is None:
+                    out_data[out_p.Id] = [out_p.RuntimeVal]
+                else:
+                    out_data[out_p.Id].append(out_p.RuntimeVal)
+
+        print(f'tools:emulator : ends with {out_data}')
+
+        return out_data
 
     # ----------------------------------------------------------------------------------------------
 
@@ -58,8 +74,6 @@ class Emulator:
             Intermediate representation.
         """
 
-        print('-- single run --')
-
         cur_node = ir.CFG.StartNode
         cur_oper_i = 0
 
@@ -70,7 +84,7 @@ class Emulator:
                 break
 
             cur_oper = cur_node.Opers[cur_oper_i]
-            print(f'    {cur_node.Id} {cur_oper.Id}')
+            self.emulate_oper(cur_oper)
 
             # Move to next operation.
             if cur_oper.is_runtime_jump():
@@ -85,5 +99,38 @@ class Emulator:
                 cur_oper_i = 0
             else:
                 cur_oper_i += 1
+
+    # ----------------------------------------------------------------------------------------------
+
+    def emulate_oper(self, oper):
+        """
+        Emulate operation.
+
+        Parameters
+        ----------
+        oper : sem.Oper
+            Operation.
+        """
+
+        n = oper.Name
+
+        if n == 'load':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal
+        elif n == 'cmpge':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal > oper.Args[1].RuntimeVal
+        elif n == 'jump':
+            # Jump operation has no calc semantic.
+            pass
+        elif n == 'add':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal + oper.Args[1].RuntimeVal
+        elif n == 'sub':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal - oper.Args[1].RuntimeVal
+        elif n == 'nop':
+            # Empty operation.
+            pass
+        elif n == 'store':
+            oper.Args[1].RuntimeVal = oper.Args[0].RuntimeVal
+        else:
+            raise Exception('py-avx512 : unknown operation {0}'.format(oper))
 
 # ==================================================================================================
