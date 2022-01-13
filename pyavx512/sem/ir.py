@@ -73,7 +73,7 @@ class IR:
         if not self.Regs:
             return 0
         else:
-            return max([r.Num for r in self.Regs]) + 1
+            return max([r.Id for r in self.Regs]) + 1
 
     # ----------------------------------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ class IR:
         """
 
         for in_par in self.InParams:
-            if in_par.Val == name:
+            if in_par.Id == name:
                 return in_par
 
         raise Exception(f'py-avx512 : no input param{name}')
@@ -133,7 +133,7 @@ class IR:
         """
 
         for out_par in self.OutParams:
-            if out_par.Val == name:
+            if out_par.Id == name:
                 return out_par
 
         raise Exception(f'py-avx512 : no output param{name}')

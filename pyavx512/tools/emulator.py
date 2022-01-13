@@ -43,6 +43,6 @@ class Emulator:
         for i in range(cases):
             # Init runtime values for input parameters.
             for ip in ir.InParams:
-                ip.RuntimeVal = data[ip.Val][i]
+                ip.RuntimeVal = data[ip.Id][i]
 
 # ==================================================================================================

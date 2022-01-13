@@ -9,7 +9,7 @@ class Operand:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, kind, val):
+    def __init__(self, kind, id):
         """
         Constructor.
 
@@ -17,7 +17,7 @@ class Operand:
         ----------
         kind : basestring
             Kind of operand.
-        val : int | float | string
+        id : int | float | string
             Number.
         """
 
@@ -30,7 +30,7 @@ class Operand:
         self.Kind = kind
 
         # Value.
-        self.Val = val
+        self.Id = id
 
         # Producer (for result).
         self.Producer = None
@@ -51,23 +51,8 @@ class Operand:
         """
 
         if self.Kind in ['i', 'o']:
-            return f'{self.Val}/{self.Kind}'
+            return f'{self.Id}/{self.Kind}'
         else:
-            return f'{self.Kind}{self.Val}'
-
-    # ----------------------------------------------------------------------------------------------
-
-    @property
-    def Num(self):
-        """
-        Number (usefull for virtual registers and predicates).
-
-        Returns
-        -------
-        num : int
-            Number
-        """
-
-        return self.Val
+            return f'{self.Kind}{self.Id}'
 
 # ==================================================================================================
