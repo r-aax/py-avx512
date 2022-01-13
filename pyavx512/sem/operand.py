@@ -32,6 +32,9 @@ class Operand:
         # Value.
         self.Val = val
 
+        # Producer (for result).
+        self.Producer = None
+
     # ----------------------------------------------------------------------------------------------
 
     def __repr__(self):

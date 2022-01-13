@@ -236,6 +236,8 @@ class IR:
         oper.Name = name
         oper.Args = args
         oper.Res = res
+        if res:
+            res.Producer = oper
         oper.Predicate = predicate
         oper.IsInvertPredicate = is_invert_predicate
         self.Opers.append(oper)
