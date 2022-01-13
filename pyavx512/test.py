@@ -25,8 +25,10 @@ def case_001_build_manual():
     ir.new_oper(n0, 'load', [ir.in_param('a')], v0)
     ir.new_oper(n0, 'load', [ir.in_param('b')], v1)
     ir.new_oper(n0, 'cmpge', [v0, v1], p0)
-    op3 = ir.new_oper(n0, 'jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
-    op4 = ir.new_oper(n0, 'jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
+    ir.new_oper(n0, 'jump', args=[], res=None, predicate=p0, is_invert_predicate=False)
+    op3 = n0.LastOper
+    ir.new_oper(n0, 'jump', args=[], res=None, predicate=p0, is_invert_predicate=True)
+    op4 = n0.LastOper
 
     # Node 1.
     n1 = g.new_node()

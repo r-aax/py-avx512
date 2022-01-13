@@ -245,7 +245,7 @@ class IR:
         self.Opers.append(oper)
         cfg_node.Opers.append(oper)
 
-        return oper
+        return oper.Res
 
     # ----------------------------------------------------------------------------------------------
 

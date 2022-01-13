@@ -52,4 +52,34 @@ class Node:
         # Foot.
         print('Edges: {0}'.format(', '.join([str(e) for e in self.OEdges])))
 
+    # ----------------------------------------------------------------------------------------------
+
+    @property
+    def FirstOper(self):
+        """
+        Get first oper.
+
+        Returns
+        -------
+        oper : sem.Oper
+            First oper.
+        """
+
+        return self.Opers[0]
+
+    # ----------------------------------------------------------------------------------------------
+
+    @property
+    def LastOper(self):
+        """
+        Get last oper.
+
+        Returns
+        -------
+        oper : sem.Oper
+            Last oper.
+        """
+
+        return self.Opers[-1]
+
 # ==================================================================================================
