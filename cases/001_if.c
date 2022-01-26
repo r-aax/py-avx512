@@ -1,4 +1,4 @@
-float fun(float a, float b, float &c)
+void fun(float a, float b, float *c)
 {
     if (a > b)
     {

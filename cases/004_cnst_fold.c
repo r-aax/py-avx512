@@ -1,4 +1,4 @@
-float fun(float a, float b, float &c)
+float fun(float a, float b, float *c)
 {
     if (a == b)
     {

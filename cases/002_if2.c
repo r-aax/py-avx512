@@ -1,4 +1,4 @@
-float fun(float a, float b, float &c, float &d)
+float fun(float a, float b, float *c, float *d)
 {
     if (a > b)
     {
@@ -8,7 +8,7 @@ float fun(float a, float b, float &c, float &d)
     {
         c = a - b;
     }
-    
+
     if (b < 2 * a)
     {
         d = a * b;

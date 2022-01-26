@@ -2,6 +2,7 @@
 Emulator realization.
 """
 
+
 # ==================================================================================================
 
 
@@ -12,10 +13,12 @@ class Emulator:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self):
+    def __init__(self, debug=False):
         """
         Constructor.
         """
+
+        self.debug = debug
 
         pass
 
@@ -49,6 +52,15 @@ class Emulator:
             for in_p in ir.InParams:
                 in_p.RuntimeVal = data[in_p.Id][i]
 
+            for const in ir.Constants:
+                const.RuntimeVal = float(const.Id)
+
+            for out_p in ir.OutParams:
+                out_p.RuntimeVal = None
+
+            if self.debug:
+                print('--InParams: ' + ', '.join(f'{d.Id} = {d.RuntimeVal}' for d in ir.InParams) + '--')
+
             self.single_run(ir)
 
             # Get output runtime values.
@@ -57,6 +69,9 @@ class Emulator:
                     out_data[out_p.Id] = [out_p.RuntimeVal]
                 else:
                     out_data[out_p.Id].append(out_p.RuntimeVal)
+
+            if self.debug:
+                print('--OutParams: ' + ', '.join(f'{d.Id} = {d.RuntimeVal}' for d in ir.OutParams) + '--')
 
         print(f'tools:emulator : ends with {out_data}')
 
@@ -118,6 +133,10 @@ class Emulator:
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal
         elif n == 'cmpge':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal > oper.Args[1].RuntimeVal
+        elif n == 'cmplt':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal < oper.Args[1].RuntimeVal
+        elif n == 'cmplte':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal <= oper.Args[1].RuntimeVal
         elif n == 'jump':
             # Jump operation has no calc semantic.
             pass
@@ -125,6 +144,16 @@ class Emulator:
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal + oper.Args[1].RuntimeVal
         elif n == 'sub':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal - oper.Args[1].RuntimeVal
+        elif n == 'mul':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal * oper.Args[1].RuntimeVal
+        elif n == 'div':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal / oper.Args[1].RuntimeVal if oper.Args[
+                                                                                           1].RuntimeVal != 0 else float(
+                'inf')
+        elif n == 'eq':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal == oper.Args[1].RuntimeVal
+
+
         elif n == 'nop':
             # Empty operation.
             pass
@@ -132,5 +161,9 @@ class Emulator:
             oper.Args[1].RuntimeVal = oper.Args[0].RuntimeVal
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
+
+        if self.debug and len(oper.Args) > 1 and oper.Res is not None:
+            print(n, f'{oper.Args[0]}={oper.Args[0].RuntimeVal}', f'{oper.Args[1]}={oper.Args[1].RuntimeVal} ->',
+                  f'{oper.Res}={oper.Res.RuntimeVal}')
 
 # ==================================================================================================

@@ -7,7 +7,7 @@ guessp(float dl,
        float ur,
        float pr,
        float cr,
-       float &pm)
+       float *pm)
 {
     float cup, gel, ger, pmax, pmin, ppv, pq, ptl, ptr, qmax, quser, um;
 

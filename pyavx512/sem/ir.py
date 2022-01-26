@@ -5,6 +5,7 @@ Intermediate representation.
 import sem
 import cfg
 
+
 # ==================================================================================================
 
 
@@ -372,6 +373,64 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
+    def mul(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create mul operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_reg()
+
+        self.new_oper('mul', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
+    def div(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create div operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_reg()
+
+        self.new_oper('div', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
     def cmpge(self, v1, v2, predct=None, predct_v=True):
         """
         Create cmpge operation.
@@ -400,6 +459,94 @@ class IR:
         return res
 
     # ----------------------------------------------------------------------------------------------
+
+    def cmplt(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create cmplt operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_predicate()
+
+        self.new_oper('cmplt', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
+    def cmplte(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create cmplt operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_predicate()
+
+        self.new_oper('cmplte', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
+    def eq(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create eq operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_predicate()
+
+        self.new_oper('eq', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
 
     def jump(self, target_node, predct=None, predct_v=True):
         """

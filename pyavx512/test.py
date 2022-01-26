@@ -5,6 +5,7 @@ Test file.
 import sem
 import tools
 
+
 # ==================================================================================================
 
 
@@ -44,22 +45,37 @@ def case_001_build_manual():
                 'b': [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
             })
 
+
 # ==================================================================================================
 
 
-def case_001_parser_parse():
+def case_parser_parse(name, result):
     """
-    Build case_001 with parser.
+    Build case with parser.
     """
 
     parser = sem.Parser()
-    parser.parse('cases/001_if.c').print()
+    cfg, ir = parser.parse(f'cases/{name}')
+
+    ir.print()
+    emu = tools.Emulator(True)
+    data = emu.run(ir,
+                   {
+                       'a': [6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0],
+                       'b': [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+                   })
+
+    assert result == data
+
 
 # ==================================================================================================
 
 
 if __name__ == '__main__':
-    case_001_build_manual()
-    # case_001_parser_parse()
+    # case_001_build_manual()
+    # case_parser_parse('001_if.c', {'c': [6.0, 6.0, 6.0, 0.0, -2.0, -4.0, -6.0]})
+    # case_parser_parse('002_if2.c', {'c': [6.0, 6.0, 6.0, 0.0, -2.0, -4.0, -6.0], 'd': [0.0, 5.0, 8.0, 9.0, 0.5, 0.2, 0.0]})
+    # case_parser_parse('003_cnst.c', {'c': [6.5, 6.5, 6.5, 9.0, -2.5, -4.5, -6.5]})
+    case_parser_parse('004_cnst_fold.c', {'c': [6.5, 6.5, 6.5, 9.0, -2.5, -4.5, -6.5]})
 
 # ==================================================================================================
