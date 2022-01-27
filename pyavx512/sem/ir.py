@@ -604,6 +604,7 @@ class IR:
         return res
 
     # ----------------------------------------------------------------------------------------------
+
     def l_and(self, v1, v2, predct=None, predct_v=True):
         """
         Create logical and operation.

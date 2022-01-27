@@ -37,6 +37,9 @@ class Parser:
             'pow': self.ir.pow,
             'sqrt': self.ir.sqrt,
         }
+        self.unary = {
+            '-': 'unary_minus',
+        }
 
     # ----------------------------------------------------------------------------------------------
 
@@ -81,13 +84,18 @@ class Parser:
                 target_node = new_nodes[0]
                 curr_node = self.ir.CurNode
                 for node_wo_edge in nodes_wo_edge:
-                    self.ir.set_cur_node(node_wo_edge)
-                    oper = self.create_always_true_oper()
-                    self.ir.jump(target_node, oper, True)
+                    self.jump(node_wo_edge, target_node)
 
                 self.ir.set_cur_node(curr_node)
 
         self.nodes_before = list(self.cfg.Nodes)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def jump(self, node_wo_edge, target_node):
+        self.ir.set_cur_node(node_wo_edge)
+        oper = self.create_always_true_oper()
+        self.ir.jump(target_node, oper, True)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -184,6 +192,21 @@ class Parser:
             return self.add_constant_if_not_ex(expr.value)
         elif get_type(expr) == 'FuncCall':
             return self.process_func_call(expr)
+        elif get_type(expr) == 'TernaryOp':
+            register = self.ir.new_reg()
+            newnodes = self.process_ternary_op(expr, register, self.ir.CurNode)
+            node = self.cfg.new_node()
+            for n in newnodes.values():
+                self.jump(n, node)
+
+            self.ir.set_cur_node(node)
+            return register
+
+        elif get_type(expr) == 'UnaryOp':
+            op = self.process_binary_expression(expr.expr)
+            register = self.ir.new_reg()
+            self.ir.new_oper(self.unary[expr.op], [op], register)
+            return register
         else:
             raise Exception(f'{get_type(expr)} is not implemented.')
 
@@ -227,21 +250,8 @@ class Parser:
                 right = self.process_binary_expression(r_value.right)
                 right_oper = math_operation(left, right)
             elif n == 'TernaryOp':
-                left = self.process_binary_expression(r_value.cond.left)
-                right = self.process_binary_expression(r_value.cond.right)
-                right_oper = self.logical_oper[r_value.cond.op](left, right)
-
-                iftrue = self.cfg.new_node()
-                iffalse = self.cfg.new_node()
-                if_list = [['True', r_value.iftrue, iftrue], ['False', r_value.iffalse, iffalse]]
-
-                for k in if_list:
-                    self.ir.jump(k[2], right_oper, k[0] == 'True')
-                    value = self.process_binary_expression(k[1])
-                    left_oper = self.get_param_or_register(l_value.name)
-                    self.ir.set_cur_node(k[2])
-                    self.ir.store(value, left_oper)
-                    self.ir.set_cur_node(node)
+                register_to_store = self.get_param_or_register(l_value.name)
+                return self.process_ternary_op(r_value, register_to_store, node)
 
                 return
 
@@ -256,6 +266,25 @@ class Parser:
             # self.fill_edges_if_need()
         else:
             raise Exception(f'Operation {op} is not implemented.')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def process_ternary_op(self, ternar, register_to_store, node):
+        left = self.process_binary_expression(ternar.cond.left)
+        right = self.process_binary_expression(ternar.cond.right)
+        right_oper = self.logical_oper[ternar.cond.op](left, right)
+        iftrue = self.cfg.new_node()
+        iffalse = self.cfg.new_node()
+        if_list = [['True', ternar.iftrue, iftrue], ['False', ternar.iffalse, iffalse]]
+        for k in if_list:
+            self.ir.jump(k[2], right_oper, k[0] == 'True')
+            value = self.process_binary_expression(k[1])
+            # left_oper = self.get_param_or_register(register_to_store.name)
+            self.ir.set_cur_node(k[2])
+            self.ir.store(value, register_to_store)
+            self.ir.set_cur_node(node)
+
+        return {'True': iftrue, 'False': iffalse}
 
     # ----------------------------------------------------------------------------------------------
 

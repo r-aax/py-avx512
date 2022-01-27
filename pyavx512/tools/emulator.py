@@ -160,6 +160,9 @@ class Emulator:
         elif n == 'sqrt':
             oper.Res.RuntimeVal = math.sqrt(oper.Args[0].RuntimeVal)
 
+        elif n == 'unary_minus':
+            oper.Res.RuntimeVal = -oper.Args[0].RuntimeVal
+
         elif n == 'jump':
             # Jump operation has no calc semantic.
             pass
