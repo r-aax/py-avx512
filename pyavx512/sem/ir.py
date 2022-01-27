@@ -131,7 +131,7 @@ class IR:
             if in_par.Id == name:
                 return in_par
 
-        raise Exception(f'py-avx512 : no input param{name}')
+        raise Exception(f'py-avx512 : no input param {name}')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -154,11 +154,11 @@ class IR:
             if out_par.Id == name:
                 return out_par
 
-        raise Exception(f'py-avx512 : no output param{name}')
+        raise Exception(f'py-avx512 : no output param {name}')
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_reg(self):
+    def new_reg(self, name='register'):
         """
         Get new register.
 
@@ -168,7 +168,7 @@ class IR:
             Register.
         """
 
-        r = sem.Operand('r', self.new_reg_num())
+        r = sem.Operand('r', self.new_reg_num(), name)
         self.Regs.append(r)
 
         return r
@@ -310,7 +310,7 @@ class IR:
             Value of predct to jump.
         """
 
-        self.new_oper('store', args=[v, self.out_param(dst)],
+        self.new_oper('store', args=[v, dst],
                       predct=predct, predct_v=predct_v)
 
     # ----------------------------------------------------------------------------------------------
@@ -396,6 +396,64 @@ class IR:
         res = self.new_reg()
 
         self.new_oper('mul', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
+    def pow(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create pow operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_reg()
+
+        self.new_oper('pow', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
+    def sqrt(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create sqrt operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_reg()
+
+        self.new_oper('sqrt', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
@@ -546,7 +604,34 @@ class IR:
         return res
 
     # ----------------------------------------------------------------------------------------------
+    def l_and(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create logical and operation.
 
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_predicate()
+
+        self.new_oper('l_and', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
 
     def jump(self, target_node, predct=None, predct_v=True):
         """

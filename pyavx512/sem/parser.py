@@ -1,6 +1,7 @@
 from pycparser import parse_file, c_generator
 import os
 import sem
+from pycparser.c_ast import ID
 
 
 class Parser:
@@ -11,7 +12,12 @@ class Parser:
         self.variable_counter = 0
         self.ir = sem.IR()
         self.cfg = self.ir.CFG
-        self.variables = dict()
+        self.out_params_names = []
+        self.in_params_names = []
+        self.in_params = dict()
+        self.out_params = dict()
+        self.registers = dict()
+        self.constants = dict()
         self.nodes_before = []
         self.math_oper = {
             '+': self.ir.add,
@@ -19,12 +25,17 @@ class Parser:
             '*': self.ir.mul,
             '/': self.ir.div
         }
-        self.compare_oper = {
+        self.logical_oper = {
             '>': self.ir.cmpge,
             '<': self.ir.cmplt,
             '<=': self.ir.cmplte,
             '>=': self.ir.cmpge,
             '==': self.ir.eq,
+            '&&': self.ir.l_and,
+        }
+        self.func_call = {
+            'pow': self.ir.pow,
+            'sqrt': self.ir.sqrt,
         }
 
     # ----------------------------------------------------------------------------------------------
@@ -33,15 +44,26 @@ class Parser:
         src = os.path.abspath(path)
         ast = parse_file(src)  # , cpp_path='C:\\MinGW\\bin\\cpp.exe',use_cpp=True)
         body = ast.ext[0].body
-        in_params = [k.name for k in ast.ext[0].decl.type.args.params if get_type(k.type) == 'TypeDecl']
-        out_params = [k.name for k in ast.ext[0].decl.type.args.params if get_type(k.type) == 'PtrDecl']
-        self.ir.set_in_out_params(in_params, out_params)
+        self.in_params_names = [k.name for k in ast.ext[0].decl.type.args.params if get_type(k.type) == 'TypeDecl']
+        self.out_params_names = [k.name for k in ast.ext[0].decl.type.args.params if get_type(k.type) == 'PtrDecl']
+        self.ir.set_in_out_params(self.in_params_names, self.out_params_names)
+
+        for k in self.ir.OutParams:
+            self.out_params[k.Id] = k
 
         for item in body.block_items:
-            if get_type(item) != 'If':
-                raise Exception('Not implemented')
+            n = get_type(item)
+            if n == 'Decl':  # variable declaration
+                self.add_register_if_not_ex(item.name)
+                if item.init is not None:
+                    self.process_assignment(ID(item.name), item.init, '=')
+            elif n == 'Assignment':
+                self.process_assignment(item.lvalue, item.rvalue, item.op, None)
+            elif n == 'If':
+                self.create_if_node(item)
+            else:
+                raise Exception(f'Block item {n} is not implemented')
 
-            self.create_if_node(item)
             self.fill_edges_if_need()
 
         return self.cfg, self.ir
@@ -69,24 +91,27 @@ class Parser:
 
     # ----------------------------------------------------------------------------------------------
 
-    def create_if_node(self, if_expr):
+    def create_if_node(self, if_expr, node=None):
         """
             Parses if expression and creates start node for this expression.
             Then parses body of if expression.
         Parameters
         ----------
+        node
         if_expr
             If expression.
         """
         if get_type(if_expr) != 'If':
             raise Exception('Not an if node.')
 
-        node = self.cfg.new_node()
+        if node is None:
+            node = self.cfg.new_node()
+
         self.ir.set_cur_node(node)
 
-        left = self.create_operation_from_binary_expression(if_expr.cond.left)
-        right = self.create_operation_from_binary_expression(if_expr.cond.right)
-        operation = self.compare_oper[if_expr.cond.op]
+        left = self.process_binary_expression(if_expr.cond.left)
+        right = self.process_binary_expression(if_expr.cond.right)
+        operation = self.logical_oper[if_expr.cond.op]
         p0 = operation(left, right)
 
         if_dict = {'True': if_expr.iftrue, 'False': if_expr.iffalse}
@@ -107,6 +132,8 @@ class Parser:
         p0
             Origin node of if expression.
         """
+        # self.fill_edges_if_need()
+
         for k, v in if_dict.items():
             if get_type(v) == 'Compound' and len(v.block_items) != 0:
                 self.ir.set_cur_node(n1)
@@ -117,9 +144,9 @@ class Parser:
                 n2 = self.cfg.new_node()
                 self.ir.set_cur_node(n2)
 
-                left = self.create_operation_from_binary_expression(v.cond.left)
-                right = self.create_operation_from_binary_expression(v.cond.right)
-                operation = self.compare_oper[v.cond.op]
+                left = self.process_binary_expression(v.cond.left)
+                right = self.process_binary_expression(v.cond.right)
+                operation = self.logical_oper[v.cond.op]
                 p1 = operation(left, right)
 
                 if_dict = {'True': v.iftrue, 'False': v.iffalse}
@@ -128,10 +155,12 @@ class Parser:
 
                 self.ir.set_cur_node(n2)
                 self.process_if(if_dict, n2, p1)
+            else:
+                raise Exception(f'{get_type(v)} is not implemented.')
 
     # ----------------------------------------------------------------------------------------------
 
-    def create_operation_from_binary_expression(self, expr):
+    def process_binary_expression(self, expr):
         """
             Recursively parses binary operations like 'a*b*c+d'
 
@@ -145,14 +174,16 @@ class Parser:
             Operand standing for whole binary expression.
         """
         if get_type(expr) == 'BinaryOp':
-            left = self.create_operation_from_binary_expression(expr.left)
-            right = self.create_operation_from_binary_expression(expr.right)
-            operation = self.math_oper[expr.op]
+            left = self.process_binary_expression(expr.left)
+            right = self.process_binary_expression(expr.right)
+            operation = self.math_oper[expr.op] if expr.op in self.math_oper else self.logical_oper[expr.op]
             return operation(left, right)
         elif get_type(expr) == 'ID':
-            return self.add_variable_if_not_ex(expr.name)
+            return self.get_param_or_register(expr.name)
         elif get_type(expr) == 'Constant':
             return self.add_constant_if_not_ex(expr.value)
+        elif get_type(expr) == 'FuncCall':
+            return self.process_func_call(expr)
         else:
             raise Exception(f'{get_type(expr)} is not implemented.')
 
@@ -172,51 +203,131 @@ class Parser:
         """
         for block_item in block_items:
             if get_type(block_item) == 'Assignment':
-                if block_item.op == '=':
-                    self.ir.set_cur_node(node)
-                    if get_type(block_item.rvalue) == 'Constant':
-                        operation = self.create_operation_from_binary_expression(block_item.rvalue)
-                        self.ir.store(operation, block_item.lvalue.name)
-                    else:
-                        math_operation = self.math_oper[block_item.rvalue.op]
-                        left = self.create_operation_from_binary_expression(block_item.rvalue.left)
-                        right = self.create_operation_from_binary_expression(block_item.rvalue.right)
-                        self.ir.store(math_operation(left, right), block_item.lvalue.name)
-                    # self.fill_edges_if_need()
-                else:
-                    raise Exception(f'{block_item.op} is not implemented.')
+                self.process_assignment(block_item.lvalue, block_item.rvalue, block_item.op, node)
             elif get_type(block_item) == 'If':
-                self.create_if_node(block_item)
+                self.create_if_node(block_item, node)
+            else:
+                raise Exception(f'Block item {get_type(block_item)} is not implemented.')
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_variable(self, name='k'):
-        self.variable_counter += 1
-        return f'{name}{self.variable_counter}'
+    def process_assignment(self, l_value, r_value, op, node=None):
+        if op == '=':
+            if node is None:
+                node = self.cfg.new_node()
+
+            self.ir.set_cur_node(node)
+            right_oper = None
+            n = get_type(r_value)
+            if n == 'Constant' or n == 'ID':
+                right_oper = self.process_binary_expression(r_value)
+            elif n == 'BinaryOp':
+                math_operation = self.math_oper[r_value.op]
+                left = self.process_binary_expression(r_value.left)
+                right = self.process_binary_expression(r_value.right)
+                right_oper = math_operation(left, right)
+            elif n == 'TernaryOp':
+                left = self.process_binary_expression(r_value.cond.left)
+                right = self.process_binary_expression(r_value.cond.right)
+                right_oper = self.logical_oper[r_value.cond.op](left, right)
+
+                iftrue = self.cfg.new_node()
+                iffalse = self.cfg.new_node()
+                if_list = [['True', r_value.iftrue, iftrue], ['False', r_value.iffalse, iffalse]]
+
+                for k in if_list:
+                    self.ir.jump(k[2], right_oper, k[0] == 'True')
+                    value = self.process_binary_expression(k[1])
+                    left_oper = self.get_param_or_register(l_value.name)
+                    self.ir.set_cur_node(k[2])
+                    self.ir.store(value, left_oper)
+                    self.ir.set_cur_node(node)
+
+                return
+
+            elif n == 'FuncCall':
+                right_oper = self.process_func_call(r_value)
+            else:
+                raise Exception(f'Rvalue {get_type(r_value)} is not implemented. - {r_value}')
+
+            left_oper = self.get_param_or_register(l_value.name)
+            self.ir.store(right_oper, left_oper)
+
+            # self.fill_edges_if_need()
+        else:
+            raise Exception(f'Operation {op} is not implemented.')
 
     # ----------------------------------------------------------------------------------------------
 
-    def add_variable_if_not_ex(self, name):
-        if name not in self.variables:
+    def process_func_call(self, func):
+        if get_type(func) != 'FuncCall':
+            raise Exception(f'Got {get_type(func)}, expected function.')
+
+        args = [self.process_binary_expression(op) for op in func.args]
+        reg = self.ir.new_reg()
+        self.ir.new_oper(func.name.name, args=args, res=reg)
+        return reg
+
+    # ----------------------------------------------------------------------------------------------
+
+    def is_out_param(self, name):
+        return name in self.out_params_names
+
+    # ----------------------------------------------------------------------------------------------
+
+    def is_in_param(self, name):
+        return name in self.in_params_names
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_param_or_register(self, name):
+        if self.is_in_param(name):
+            return self.load_in_param(name)
+        elif self.is_out_param(name):
+            return self.out_params[name]
+        else:
+            return self.get_register(name)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def load_in_param(self, name):
+        if name not in self.in_params:
             print(name)
-            self.variables[name] = self.ir.load(name)
+            self.in_params[name] = self.ir.load(name)
 
-        return self.variables[name]
+        return self.in_params[name]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_register(self, name):
+        if name not in self.registers:
+            raise KeyError(f'{name} is not found in registers.')
+
+        return self.registers[name]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def add_register_if_not_ex(self, name):
+        if name not in self.registers:
+            print(name)
+            self.registers[name] = self.ir.new_reg(name)
+
+        return self.registers[name]
 
     # ----------------------------------------------------------------------------------------------
 
     def add_constant_if_not_ex(self, value):
-        if value not in self.variables:
-            self.variables[value] = self.ir.new_constant(value)
+        if value not in self.constants:
+            self.constants[value] = self.ir.new_constant(value)
 
-        return self.variables[value]
+        return self.constants[value]
 
     # ----------------------------------------------------------------------------------------------
 
     def create_always_true_oper(self):
         zero = self.add_constant_if_not_ex(0)
         one = self.add_constant_if_not_ex(1)
-        return self.compare_oper['>'](one, zero)
+        return self.logical_oper['>'](one, zero)
 
 
 # ----------------------------------------------------------------------------------------------

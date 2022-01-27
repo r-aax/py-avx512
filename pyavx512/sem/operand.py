@@ -9,7 +9,7 @@ class Operand:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, kind, id):
+    def __init__(self, kind, id, name=''):
         """
         Constructor.
 
@@ -38,6 +38,8 @@ class Operand:
         # Value for runtime.
         self.RuntimeVal = None
 
+        self.Name = name
+
     # ----------------------------------------------------------------------------------------------
 
     def __repr__(self):
@@ -51,8 +53,8 @@ class Operand:
         """
 
         if self.Kind in ['i', 'o']:
-            return f'{self.Id}/{self.Kind}'
+            return f'{self.Id}/{self.Kind} ({self.Name})'
         else:
-            return f'{self.Kind}{self.Id}'
+            return f'{self.Kind}{self.Id} ({self.Name})'
 
 # ==================================================================================================

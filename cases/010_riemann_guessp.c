@@ -10,6 +10,13 @@ guessp(float dl,
        float *pm)
 {
     float cup, gel, ger, pmax, pmin, ppv, pq, ptl, ptr, qmax, quser, um;
+    float G1 = 1;
+    float G2 = 2;
+    float G3 = 3;
+    float G4 = 4;
+    float G5 = 5;
+    float G6 = 6;
+    float G7 = 7;
 
     quser = 2.0;
 

@@ -49,7 +49,7 @@ def case_001_build_manual():
 # ==================================================================================================
 
 
-def case_parser_parse(name, result):
+def case_parser_parse(name, input, result):
     """
     Build case with parser.
     """
@@ -59,23 +59,36 @@ def case_parser_parse(name, result):
 
     ir.print()
     emu = tools.Emulator(True)
-    data = emu.run(ir,
-                   {
-                       'a': [6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0],
-                       'b': [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
-                   })
+    data = emu.run(ir, input)
 
-    assert result == data
+    for k, v in result.items():
+        for i in range(len(v)):
+            isclose(result[k][i], data[k][i], k)
+
+
+def isclose(expected, actual, k, rel_tol=1e-09, abs_tol=0.1):
+    ok = abs(expected - actual) <= max(rel_tol * max(abs(expected), abs(actual)), abs_tol)
+    if not ok:
+        raise AssertionError(f'Param name {k}: got {actual}, expected {expected}.')
 
 
 # ==================================================================================================
 
 
 if __name__ == '__main__':
-    # case_001_build_manual()
-    # case_parser_parse('001_if.c', {'c': [6.0, 6.0, 6.0, 0.0, -2.0, -4.0, -6.0]})
-    # case_parser_parse('002_if2.c', {'c': [6.0, 6.0, 6.0, 0.0, -2.0, -4.0, -6.0], 'd': [0.0, 5.0, 8.0, 9.0, 0.5, 0.2, 0.0]})
-    # case_parser_parse('003_cnst.c', {'c': [6.5, 6.5, 6.5, 9.0, -2.5, -4.5, -6.5]})
-    case_parser_parse('004_cnst_fold.c', {'c': [6.5, 6.5, 6.5, 9.0, -2.5, -4.5, -6.5]})
 
-# ==================================================================================================
+    ab = {
+        'a': [6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0],
+        'b': [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+    }
+
+    riemann_guessp = {'dl': [1], 'ul': [2], 'pl': [3], 'cl': [4], 'dr': [5], 'ur': [6], 'pr': [7], 'cr': [8]}
+
+    # case_001_build_manual()
+    # case_parser_parse('001_if.c',ab, {'c': [6.0, 6.0, 6.0, 0.0, -2.0, -4.0, -6.0]})
+    # case_parser_parse('002_if2.c',ab, {'c': [6.0, 6.0, 6.0, 0.0, -2.0, -4.0, -6.0], 'd': [0.0, 5.0, 8.0, 9.0, 0.5, 0.2, 0.0]})
+    # case_parser_parse('003_cnst.c',ab, {'c': [6.5, 6.5, 6.5, 9.0, -2.5, -4.5, -6.5]})
+    # case_parser_parse('004_cnst_fold.c', ab, {'c': [6.0, 6.0, 6.0, 0.7833333333333332, 6.0, 6.0, 6.0]})
+    case_parser_parse('010_riemann_guessp.c', riemann_guessp, {'pm': [-94059.6]})
+
+    # ==================================================================================================

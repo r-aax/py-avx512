@@ -2,8 +2,8 @@
 Emulator realization.
 """
 
-
 # ==================================================================================================
+import math
 
 
 class Emulator:
@@ -99,6 +99,7 @@ class Emulator:
                 break
 
             cur_oper = cur_node.Opers[cur_oper_i]
+            print(cur_oper)
             self.emulate_oper(cur_oper)
 
             # Move to next operation.
@@ -131,15 +132,18 @@ class Emulator:
 
         if n == 'load':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal
+
+        elif n == 'eq':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal == oper.Args[1].RuntimeVal
         elif n == 'cmpge':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal > oper.Args[1].RuntimeVal
         elif n == 'cmplt':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal < oper.Args[1].RuntimeVal
         elif n == 'cmplte':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal <= oper.Args[1].RuntimeVal
-        elif n == 'jump':
-            # Jump operation has no calc semantic.
-            pass
+        elif n == 'l_and':
+            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal and oper.Args[1].RuntimeVal
+
         elif n == 'add':
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal + oper.Args[1].RuntimeVal
         elif n == 'sub':
@@ -150,14 +154,22 @@ class Emulator:
             oper.Res.RuntimeVal = oper.Args[0].RuntimeVal / oper.Args[1].RuntimeVal if oper.Args[
                                                                                            1].RuntimeVal != 0 else float(
                 'inf')
-        elif n == 'eq':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal == oper.Args[1].RuntimeVal
 
+        elif n == 'pow':
+            oper.Res.RuntimeVal = math.pow(oper.Args[0].RuntimeVal, oper.Args[1].RuntimeVal)
+        elif n == 'sqrt':
+            oper.Res.RuntimeVal = math.sqrt(oper.Args[0].RuntimeVal)
 
+        elif n == 'jump':
+            # Jump operation has no calc semantic.
+            pass
         elif n == 'nop':
             # Empty operation.
             pass
         elif n == 'store':
+            if self.debug:
+                print('store', oper.Args[1], oper.Args[1].RuntimeVal, oper.Args[0], oper.Args[0].RuntimeVal)
+
             oper.Args[1].RuntimeVal = oper.Args[0].RuntimeVal
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
