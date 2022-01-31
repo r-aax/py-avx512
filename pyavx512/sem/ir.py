@@ -158,7 +158,7 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_reg(self, name='register'):
+    def new_reg(self, name=''):
         """
         Get new register.
 
@@ -653,14 +653,17 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
+    def dump(self):
+        s = f'IR:\n\tin_params = {self.InParams}\n\tout_params = {self.OutParams}'
+        return f'{s}\n{self.CFG.dump()}'
+
+    # ----------------------------------------------------------------------------------------------
+
     def print(self):
         """
         Print.
         """
 
-        print('IR:')
-        print(f'  in_params = {self.InParams}, out_params = {self.OutParams}')
-
-        self.CFG.print()
+        print(self.dump())
 
 # ==================================================================================================

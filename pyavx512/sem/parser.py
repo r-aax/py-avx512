@@ -54,6 +54,12 @@ class Parser:
         for k in self.ir.OutParams:
             self.out_params[k.Id] = k
 
+        node = self.cfg.new_node()
+        self.ir.set_cur_node(node)
+        self.nodes_before.append(node)
+        for k in self.ir.InParams:
+            self.in_params[k.Id] = self.ir.load(k.Id)
+
         for item in body.block_items:
             n = get_type(item)
             if n == 'Decl':  # variable declaration
@@ -290,7 +296,7 @@ class Parser:
 
     def process_func_call(self, func):
         if get_type(func) != 'FuncCall':
-            raise Exception(f'Got {get_type(func)}, expected function.')
+            raise Exception(f'Got {get_type(func)}, expected FuncCall.')
 
         args = [self.process_binary_expression(op) for op in func.args]
         reg = self.ir.new_reg()
@@ -321,7 +327,6 @@ class Parser:
 
     def load_in_param(self, name):
         if name not in self.in_params:
-            print(name)
             self.in_params[name] = self.ir.load(name)
 
         return self.in_params[name]
@@ -338,7 +343,6 @@ class Parser:
 
     def add_register_if_not_ex(self, name):
         if name not in self.registers:
-            print(name)
             self.registers[name] = self.ir.new_reg(name)
 
         return self.registers[name]

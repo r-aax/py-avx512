@@ -170,15 +170,11 @@ class Emulator:
             # Empty operation.
             pass
         elif n == 'store':
-            if self.debug:
-                print('store', oper.Args[1], oper.Args[1].RuntimeVal, oper.Args[0], oper.Args[0].RuntimeVal)
-
             oper.Args[1].RuntimeVal = oper.Args[0].RuntimeVal
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
 
-        if self.debug and len(oper.Args) > 1 and oper.Res is not None:
-            print(n, f'{oper.Args[0]}={oper.Args[0].RuntimeVal}', f'{oper.Args[1]}={oper.Args[1].RuntimeVal} ->',
-                  f'{oper.Res}={oper.Res.RuntimeVal}')
+        if self.debug:
+            print(n, ', '.join(f'{k}={k.RuntimeVal}' for k in oper.Args), f'{oper.Res}={oper.Res.RuntimeVal}' if oper.Res is not None else '')
 
-# ==================================================================================================
+            # ==================================================================================================

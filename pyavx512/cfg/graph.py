@@ -124,8 +124,11 @@ class Graph:
         Print CFG graph.
         """
 
-        for node in self.Nodes:
-            print('')
-            node.print()
+        print(self.dump())
+
+    # ----------------------------------------------------------------------------------------------
+
+    def dump(self):
+        return '\n'.join(node.dump() for node in self.Nodes)
 
 # ==================================================================================================

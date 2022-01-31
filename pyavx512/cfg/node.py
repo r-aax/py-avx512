@@ -37,20 +37,30 @@ class Node:
 
     # ----------------------------------------------------------------------------------------------
 
+    def dump(self):
+        """
+        Dump node.
+        """
+
+        # Head.
+        start = 'CFG Node {0}:'.format(self.Id)
+
+        # Opers.
+        opers = '\n'.join('\t{0}'.format(oper) for oper in self.Opers)
+
+        # Foot.
+        edges = 'Edges: {0}'.format(', '.join([str(e) for e in self.OEdges]))
+
+        return f'{start}\n{opers}\n{edges}'
+
+    # ----------------------------------------------------------------------------------------------
+
     def print(self):
         """
         Print node.
         """
 
-        # Head.
-        print('CFG Node {0}:'.format(self.Id))
-
-        # Opers.
-        for oper in self.Opers:
-            print('  {0}'.format(oper))
-
-        # Foot.
-        print('Edges: {0}'.format(', '.join([str(e) for e in self.OEdges])))
+        print(self.dump())
 
     # ----------------------------------------------------------------------------------------------
 

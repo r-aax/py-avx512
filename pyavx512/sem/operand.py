@@ -2,6 +2,7 @@
 Operand.
 """
 
+
 # ==================================================================================================
 
 
@@ -51,10 +52,11 @@ class Operand:
         str : basestring
             String.
         """
+        name = f' {(self.Name)}' if self.Name != '' else ''
 
         if self.Kind in ['i', 'o']:
-            return f'{self.Id}/{self.Kind} ({self.Name})'
+            return f'{self.Id}/{self.Kind}{name}'
         else:
-            return f'{self.Kind}{self.Id} ({self.Name})'
+            return f'{self.Kind}{self.Id}{name}'
 
 # ==================================================================================================

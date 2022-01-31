@@ -7,14 +7,13 @@ starpu(float dl,
        float ur,
        float pr,
        float cr,
-       float &p,
-       float &u)
+       float *p,
+       float *u)
 {
     const int nriter = 20;
     const float tolpre = 1.0e-6;
     float change, fl, fld, fr, frd, pold, pstart, udiff;
 
-    // Guessed value pstart is computed.
     guessp(dl, ul, pl, cl, dr, ur, pr, cr, pstart);
     pold = pstart;
     udiff = ur - ul;
@@ -48,6 +47,5 @@ starpu(float dl,
         exit(1);
     }
 
-    // compute velocity in star region
     u = 0.5 * (ul + ur + fr - fl);
 }
