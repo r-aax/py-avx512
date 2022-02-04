@@ -106,7 +106,11 @@ def dump_all_cases(names=None):
         f = open(f'{output_path}/{entry.name}.txt', "w")
         delim = '----------------------------------------------------------------------'
         f.write(f'Source code:\n{delim}\n{code}{delim}\n\n')
-        f.write(f'IR:\n{delim}\n{ir_dump}{delim}\n')
+        f.write(f'IR:\n{delim}\n{ir_dump}{delim}\n\n')
+        opt = tools.Optimizer()
+        opt.optimize(ir)
+        opt_ir_dump = ir.dump()
+        f.write(f'Optimized IR:\n{delim}\n{opt_ir_dump}{delim}\n')
         f.close()
 
 # ==================================================================================================
