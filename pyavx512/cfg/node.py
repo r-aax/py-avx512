@@ -51,7 +51,7 @@ class Node:
         # Foot.
         edges = 'Edges: {0}'.format(', '.join([str(e) for e in self.OEdges]))
 
-        return f'{start}\n{opers}\n{edges}'
+        return f'{start}\n{opers}\n{edges}\n'
 
     # ----------------------------------------------------------------------------------------------
 

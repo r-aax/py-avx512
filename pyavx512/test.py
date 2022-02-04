@@ -103,9 +103,10 @@ def dump_all_cases(names=None):
         except Exception as e:
             ir_dump = f'Err: {e}'
 
-        content = f'{code}\n{ir_dump}'
         f = open(f'{output_path}/{entry.name}.txt', "w")
-        f.write(content)
+        delim = '----------------------------------------------------------------------'
+        f.write(f'Source code:\n{delim}\n{code}{delim}\n\n')
+        f.write(f'IR:\n{delim}\n{ir_dump}{delim}\n')
         f.close()
 
 # ==================================================================================================

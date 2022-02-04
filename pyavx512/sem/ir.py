@@ -654,8 +654,8 @@ class IR:
     # ----------------------------------------------------------------------------------------------
 
     def dump(self):
-        s = f'IR:\n\tin_params = {self.InParams}\n\tout_params = {self.OutParams}'
-        return f'{s}\n{self.CFG.dump()}'
+        s = f'\tin_params = {self.InParams}\n\tout_params = {self.OutParams}'
+        return f'{s}\n\n{self.CFG.dump()}'
 
     # ----------------------------------------------------------------------------------------------
 
