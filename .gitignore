@@ -1,1 +1,3 @@
-pyavx512/du/__pycache__/*
+pyavx512/cfg/__pycache__/*
+pyavx512/sem/__pycache__/*
+pyavx512/tools/__pycache__/*
