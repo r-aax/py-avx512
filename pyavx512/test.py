@@ -2,6 +2,7 @@
 Test file.
 """
 
+import numpy as np
 import os
 import sem
 import tools
@@ -81,7 +82,10 @@ def dump_all_cases(names=None):
     input_path = 'cases'
     output_path = 'out'
 
-    parser = sem.Parser()
+    parser_orig = sem.Parser()
+    parser_opt = sem.Parser()
+    opt = tools.Optimizer()
+    emu = tools.Emulator()
 
     if not os.path.isdir(output_path):
         os.makedirs(output_path)
@@ -98,19 +102,45 @@ def dump_all_cases(names=None):
         f.close()
 
         try:
-            cfg, ir = parser.parse(entry.path)
-            ir_dump = ir.dump()
+            cfg_orig, ir_orig = parser_orig.parse(entry.path)
+            cfg_opt, ir_opt = parser_opt.parse(entry.path)
+            ir_orig_dump = ir_orig.dump()
+            opt.optimize(ir_opt)
+            ir_opt_dump = ir_opt.dump()
         except Exception as e:
             ir_dump = f'Err: {e}'
 
+        # Run original and optimized IR.
+        input_data = {}
+        for in_param in ir_orig.InParams:
+            input_data[in_param.Id] = np.random.uniform(-100.0, 100.0, 16)
+        res_orig = emu.run(ir_orig, input_data)
+        res_opt = emu.run(ir_opt, input_data)
+
         f = open(f'{output_path}/{entry.name}.txt', "w")
         delim = '----------------------------------------------------------------------'
+
+        # Print parse result.
         f.write(f'Source code:\n{delim}\n{code}{delim}\n\n')
-        f.write(f'IR:\n{delim}\n{ir_dump}{delim}\n\n')
-        opt = tools.Optimizer()
-        opt.optimize(ir)
-        opt_ir_dump = ir.dump()
-        f.write(f'Optimized IR:\n{delim}\n{opt_ir_dump}{delim}\n')
+        f.write(f'IR:\n{delim}\n{ir_orig_dump}{delim}\n\n')
+        f.write(f'Optimized IR:\n{delim}\n{ir_opt_dump}{delim}\n\n')
+
+        # Print run result.
+        f.write(f'Run:\n{delim}\n')
+        f.write(f'In data:\n')
+        for x in input_data:
+            f.write(f'{x}: {input_data[x]}\n')
+        f.write(f'{delim}\n')
+        f.write(f'Result orig:\n')
+        for x in res_orig:
+            f.write(f'{x}: {res_orig[x]}\n')
+        f.write(f'Result opt:\n')
+        for x in res_opt:
+            f.write(f'{x}: {res_opt[x]}\n')
+        f.write(f'Results compare:\n')
+        for x in res_opt:
+            f.write(f'{x}: diff = {np.array(res_orig[x]) - np.array(res_opt[x])}\n')
+        f.write(f'{delim}\n')
         f.close()
 
 # ==================================================================================================

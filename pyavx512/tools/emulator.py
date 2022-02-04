@@ -33,8 +33,9 @@ class Emulator:
         ----------
         ir : sem.IR
             Intermediate representation.
-        data
+        data : dictionary
             Input data.
+            Format if input data : { <name of parameter>: <array of values> }
 
         Returns
         -------
@@ -43,7 +44,7 @@ class Emulator:
 
         cases = len(list(data.values())[0])
 
-        print(f'tools:emulator : run {cases} cases with {data}')
+        # print(f'tools:emulator : run {cases} cases with {data}')
 
         out_data = dict()
 
@@ -74,7 +75,7 @@ class Emulator:
             if self.debug:
                 print('--OutParams: ' + ', '.join(f'{d.Id} = {d.RuntimeVal}' for d in ir.OutParams) + '--')
 
-        print(f'tools:emulator : ends with {out_data}')
+        # print(f'tools:emulator : ends with {out_data}')
 
         return out_data
 
@@ -100,7 +101,7 @@ class Emulator:
                 break
 
             cur_oper = cur_node.Opers[cur_oper_i]
-            print(cur_oper)
+            # print(cur_oper)
             self.emulate_oper(cur_oper)
 
             # Move to next operation.
@@ -178,4 +179,4 @@ class Emulator:
         if self.debug:
             print(n, ', '.join(f'{k}={k.RuntimeVal}' for k in oper.Args), f'{oper.Res}={oper.Res.RuntimeVal}' if oper.Res is not None else '')
 
-            # ==================================================================================================
+# ==================================================================================================
