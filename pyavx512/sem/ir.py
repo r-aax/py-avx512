@@ -158,7 +158,7 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_reg(self, name=''):
+    def new_reg(self):
         """
         Get new register.
 
@@ -168,7 +168,7 @@ class IR:
             Register.
         """
 
-        r = sem.Operand('r', self.new_reg_num(), name)
+        r = sem.Operand('r', self.new_reg_num())
         self.Regs.append(r)
 
         return r

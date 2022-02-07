@@ -10,7 +10,7 @@ class Operand:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, kind, id, name=''):
+    def __init__(self, kind, id):
         """
         Constructor.
 
@@ -39,8 +39,6 @@ class Operand:
         # Value for runtime.
         self.RuntimeVal = None
 
-        self.Name = name
-
     # ----------------------------------------------------------------------------------------------
 
     def __repr__(self):
@@ -52,11 +50,9 @@ class Operand:
         str : basestring
             String.
         """
-        name = f' {(self.Name)}' if self.Name != '' else ''
-
         if self.Kind in ['i', 'o']:
-            return f'{self.Id}/{self.Kind}{name}'
+            return f'{self.Id}/{self.Kind}'
         else:
-            return f'{self.Kind}{self.Id}{name}'
+            return f'{self.Kind}{self.Id}'
 
 # ==================================================================================================

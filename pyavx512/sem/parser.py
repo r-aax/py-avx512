@@ -361,7 +361,7 @@ class Parser:
 
     def add_register_if_not_ex(self, name):
         if name not in self.registers:
-            self.registers[name] = self.ir.new_reg(name)
+            self.registers[name] = self.ir.new_reg()
 
         return self.registers[name]
 
