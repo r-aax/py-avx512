@@ -10,6 +10,22 @@ class Parser:
 
     def __init__(self):
         self.variable_counter = 0
+        self.ir = None
+        self.cfg = None
+        self.out_params_names = None
+        self.in_params_names = None
+        self.in_params = None
+        self.out_params = None
+        self.registers = None
+        self.constants = None
+        self.nodes_before = None
+        self.math_oper = None
+        self.logical_oper = None
+        self.func_call = None
+        self.unary = None
+
+    # ----------------------------------------------------------------------------------------------
+    def initialize(self):
         self.ir = sem.IR()
         self.cfg = self.ir.CFG
         self.out_params_names = []
@@ -44,6 +60,8 @@ class Parser:
     # ----------------------------------------------------------------------------------------------
 
     def parse(self, path):
+        self.initialize()
+
         src = os.path.abspath(path)
         ast = parse_file(src)  # , cpp_path='C:\\MinGW\\bin\\cpp.exe',use_cpp=True)
         body = ast.ext[0].body
