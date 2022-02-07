@@ -63,7 +63,10 @@ class Emulator:
             if self.debug:
                 print('--InParams: ' + ', '.join(f'{d.Id} = {d.RuntimeVal}' for d in ir.InParams) + '--')
 
-            self.single_run(ir)
+            try:
+                self.single_run(ir)
+            except Exception as e:
+                print(e)
 
             # Get output runtime values.
             for out_p in ir.OutParams:
@@ -158,7 +161,11 @@ class Emulator:
                 'inf')
 
         elif n == 'pow':
-            oper.Res.RuntimeVal = math.pow(oper.Args[0].RuntimeVal, oper.Args[1].RuntimeVal)
+            try:
+                oper.Res.RuntimeVal = math.pow(oper.Args[0].RuntimeVal, oper.Args[1].RuntimeVal)
+            except ValueError as e:
+                print(e)
+                oper.Res.RuntimeVal = math.nan
         elif n == 'sqrt':
             oper.Res.RuntimeVal = math.sqrt(oper.Args[0].RuntimeVal)
 

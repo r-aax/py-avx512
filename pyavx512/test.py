@@ -109,6 +109,7 @@ def dump_all_cases(names=None):
             ir_opt_dump = ir_opt.dump()
         except Exception as e:
             ir_dump = f'Err: {e}'
+            print(e)
 
         # Run original and optimized IR.
         input_data = {}
@@ -139,7 +140,7 @@ def dump_all_cases(names=None):
             f.write(f'{x}: {res_opt[x]}\n')
         f.write(f'Results compare:\n')
         for x in res_opt:
-            f.write(f'{x}: diff = {np.array(res_orig[x]) - np.array(res_opt[x])}\n')
+            f.write(f'{x}: diff = {[k-z if k is not None and z is not None else "Nan" for k,z in zip(np.array(res_orig[x]),np.array(res_opt[x]))]}\n')
         f.write(f'{delim}\n')
         f.close()
 
