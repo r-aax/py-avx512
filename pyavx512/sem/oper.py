@@ -87,6 +87,6 @@ class Oper:
         if self.Predct is None:
             return True
 
-        return self.PredctV == self.Predct.RuntimeVal
+        return self.PredctV == self.Predct.Val
 
 # ==================================================================================================

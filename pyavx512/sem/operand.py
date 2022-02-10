@@ -37,7 +37,7 @@ class Operand:
         self.Producer = None
 
         # Value for runtime.
-        self.RuntimeVal = None
+        self.Val = None
 
     # ----------------------------------------------------------------------------------------------
 

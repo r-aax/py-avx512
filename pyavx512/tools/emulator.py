@@ -39,9 +39,11 @@ class Emulator:
 
         Returns
         -------
-            Output data.
+            Output data and emulated operations count
+            (tuple { data, opers_count }).
         """
 
+        emulated_operations_count = 0
         cases = len(list(data.values())[0])
 
         # print(f'tools:emulator : run {cases} cases with {data}')
@@ -52,35 +54,35 @@ class Emulator:
 
             # Init runtime values for input parameters.
             for in_p in ir.InParams:
-                in_p.RuntimeVal = data[in_p.Id][i]
+                in_p.Val = data[in_p.Id][i]
 
             for const in ir.Constants:
-                const.RuntimeVal = float(const.Id)
+                const.Val = float(const.Id)
 
             for out_p in ir.OutParams:
-                out_p.RuntimeVal = None
+                out_p.Val = None
 
             if self.debug:
-                print('--InParams: ' + ', '.join(f'{d.Id} = {d.RuntimeVal}' for d in ir.InParams) + '--')
+                print('--InParams: ' + ', '.join(f'{d.Id} = {d.Val}' for d in ir.InParams) + '--')
 
             try:
-                self.single_run(ir)
+                emulated_operations_count += self.single_run(ir)
             except Exception as e:
                 print(e)
 
             # Get output runtime values.
             for out_p in ir.OutParams:
                 if out_data.get(out_p.Id) is None:
-                    out_data[out_p.Id] = [out_p.RuntimeVal]
+                    out_data[out_p.Id] = [out_p.Val]
                 else:
-                    out_data[out_p.Id].append(out_p.RuntimeVal)
+                    out_data[out_p.Id].append(out_p.Val)
 
             if self.debug:
-                print('--OutParams: ' + ', '.join(f'{d.Id} = {d.RuntimeVal}' for d in ir.OutParams) + '--')
+                print('--OutParams: ' + ', '.join(f'{d.Id} = {d.Val}' for d in ir.OutParams) + '--')
 
         # print(f'tools:emulator : ends with {out_data}')
 
-        return out_data
+        return out_data, emulated_operations_count
 
     # ----------------------------------------------------------------------------------------------
 
@@ -92,7 +94,13 @@ class Emulator:
         ----------
         ir : sem.IR
             Intermediate representation.
+
+        Returns
+        -------
+            Emulated operations count.
         """
+
+        emulated_operations_count = 0
 
         cur_node = ir.CFG.StartNode
         cur_oper_i = 0
@@ -106,6 +114,7 @@ class Emulator:
             cur_oper = cur_node.Opers[cur_oper_i]
             # print(cur_oper)
             self.emulate_oper(cur_oper)
+            emulated_operations_count += 1
 
             # Move to next operation.
             if cur_oper.is_runtime_jump():
@@ -120,6 +129,8 @@ class Emulator:
                 cur_oper_i = 0
             else:
                 cur_oper_i += 1
+
+        return emulated_operations_count
 
     # ----------------------------------------------------------------------------------------------
 
@@ -136,41 +147,39 @@ class Emulator:
         n = oper.Name
 
         if n == 'load':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val
 
         elif n == 'eq':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal == oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val == oper.Args[1].Val
         elif n == 'cmpge':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal > oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val > oper.Args[1].Val
         elif n == 'cmplt':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal < oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val < oper.Args[1].Val
         elif n == 'cmplte':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal <= oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val <= oper.Args[1].Val
         elif n == 'l_and':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal and oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val and oper.Args[1].Val
 
         elif n == 'add':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal + oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val + oper.Args[1].Val
         elif n == 'sub':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal - oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val - oper.Args[1].Val
         elif n == 'mul':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal * oper.Args[1].RuntimeVal
+            oper.Res.Val = oper.Args[0].Val * oper.Args[1].Val
         elif n == 'div':
-            oper.Res.RuntimeVal = oper.Args[0].RuntimeVal / oper.Args[1].RuntimeVal if oper.Args[
-                                                                                           1].RuntimeVal != 0 else float(
-                'inf')
+            oper.Res.Val = oper.Args[0].Val / oper.Args[1].Val if oper.Args[1].Val != 0 else float('inf')
 
         elif n == 'pow':
             try:
-                oper.Res.RuntimeVal = math.pow(oper.Args[0].RuntimeVal, oper.Args[1].RuntimeVal)
+                oper.Res.Val = math.pow(oper.Args[0].Val, oper.Args[1].Val)
             except ValueError as e:
                 print(e)
-                oper.Res.RuntimeVal = math.nan
+                oper.Res.Val = math.nan
         elif n == 'sqrt':
-            oper.Res.RuntimeVal = math.sqrt(oper.Args[0].RuntimeVal)
+            oper.Res.Val = math.sqrt(oper.Args[0].Val)
 
         elif n == 'unary_minus':
-            oper.Res.RuntimeVal = -oper.Args[0].RuntimeVal
+            oper.Res.Val = -oper.Args[0].Val
 
         elif n == 'jump':
             # Jump operation has no calc semantic.
@@ -179,11 +188,11 @@ class Emulator:
             # Empty operation.
             pass
         elif n == 'store':
-            oper.Args[1].RuntimeVal = oper.Args[0].RuntimeVal
+            oper.Args[1].Val = oper.Args[0].Val
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
 
         if self.debug:
-            print(n, ', '.join(f'{k}={k.RuntimeVal}' for k in oper.Args), f'{oper.Res}={oper.Res.RuntimeVal}' if oper.Res is not None else '')
+            print(n, ', '.join(f'{k}={k.Val}' for k in oper.Args), f'{oper.Res}={oper.Res.Val}' if oper.Res is not None else '')
 
 # ==================================================================================================
