@@ -181,6 +181,8 @@ class Emulator:
         elif n == 'unary_minus':
             oper.Res.Val = -oper.Args[0].Val
 
+        elif n == 'mov':
+            oper.Args[1].Val = oper.Args[0].Val
         elif n == 'jump':
             # Jump operation has no calc semantic.
             pass
