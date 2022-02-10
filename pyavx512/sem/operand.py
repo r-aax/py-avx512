@@ -51,8 +51,12 @@ class Operand:
             String.
         """
         if self.Kind in ['i', 'o']:
-            return f'{self.Id}/{self.Kind}'
-        else:
+            return f'{self.Kind}/{self.Id}'
+        elif self.Kind in ['r', 'p']:
             return f'{self.Kind}{self.Id}'
+        elif self.Kind == 'c':
+            return f'{self.Kind}.{self.Id}'
+        else:
+            raise Exception(f'unknown operand kind "{self.Kind}"')
 
 # ==================================================================================================
