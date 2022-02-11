@@ -41,7 +41,7 @@ def is_close(expected, actual, k, rel_tol=1e-09, abs_tol=0.1):
 # ==================================================================================================
 
 
-def run_case(name, input, result):
+def run_case(name, input=None, result=None):
     """
     Run case with results check.
 
@@ -60,7 +60,13 @@ def run_case(name, input, result):
 
     ir.print()
     emu = tools.Emulator(True)
+    if input is None:
+        return
+
     data = emu.run(ir, input)
+
+    if result is None:
+        return
 
     for k, v in result.items():
         for i in range(len(v)):
@@ -149,7 +155,7 @@ def dump_all_cases(names=None):
 
 
 if __name__ == '__main__':
-
-    dump_all_cases()
+    # dump_all_cases()
+    run_case('021_bool.c')
 
 # ==================================================================================================
