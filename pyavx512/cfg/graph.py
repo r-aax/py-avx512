@@ -126,7 +126,6 @@ class Graph:
 
         for edge in self.Edges:
             edge.Counter = 0
-            edge.Probability = 0
 
     # ----------------------------------------------------------------------------------------------
 
