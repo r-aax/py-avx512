@@ -35,6 +35,8 @@ class Node:
         # Opers.
         self.Opers = []
 
+        self.Counter = 0
+
     # ----------------------------------------------------------------------------------------------
 
     def dump(self):
@@ -43,7 +45,7 @@ class Node:
         """
 
         # Head.
-        start = 'CFG Node {0}:'.format(self.Id)
+        start = 'CFG Node {0} (cnt = {1}):'.format(self.Id, self.Counter)
 
         # Opers.
         opers = '\n'.join('\t{0}'.format(oper) for oper in self.Opers)

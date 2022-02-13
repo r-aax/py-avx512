@@ -7,6 +7,7 @@ import os
 import sem
 import tools
 
+
 # ==================================================================================================
 
 
@@ -37,6 +38,7 @@ def is_close(expected, actual, k, rel_tol=1e-09, abs_tol=0.1):
 
     if not ok:
         raise AssertionError(f'Param name {k}: got {actual}, expected {expected}.')
+
 
 # ==================================================================================================
 
@@ -71,6 +73,7 @@ def run_case(name, input=None, result=None):
     for k, v in result.items():
         for i in range(len(v)):
             is_close(result[k][i], data[k][i], k)
+
 
 # ==================================================================================================
 
@@ -110,19 +113,21 @@ def dump_all_cases(names=None):
         try:
             cfg_orig, ir_orig = parser_orig.parse(entry.path)
             cfg_opt, ir_opt = parser_opt.parse(entry.path)
-            ir_orig_dump = ir_orig.dump()
+
             opt.optimize(ir_opt)
+
+            # Run original and optimized IR.
+            input_data = {}
+            for in_param in ir_orig.InParams:
+                input_data[in_param.Id] = np.random.uniform(-100.0, 100.0, 16)
+            res_orig, opers_count_orig = emu.run(ir_orig, input_data)
+            res_opt, opers_count_opt = emu.run(ir_opt, input_data)
+
+            ir_orig_dump = ir_orig.dump()
             ir_opt_dump = ir_opt.dump()
         except Exception as e:
             ir_dump = f'Err: {e}'
             print(e)
-
-        # Run original and optimized IR.
-        input_data = {}
-        for in_param in ir_orig.InParams:
-            input_data[in_param.Id] = np.random.uniform(-100.0, 100.0, 16)
-        res_orig, opers_count_orig = emu.run(ir_orig, input_data)
-        res_opt, opers_count_opt = emu.run(ir_opt, input_data)
 
         f = open(f'{output_path}/{entry.name}.txt', "w")
         delim = '----------------------------------------------------------------------'
@@ -144,18 +149,21 @@ def dump_all_cases(names=None):
         f.write(f'Result opt:\n')
         for x in res_opt:
             f.write(f'{x}: {res_opt[x]}\n')
-        f.write(f'Orig operations count {opers_count_orig}, opt operations count {opers_count_opt} (speedup {opers_count_orig / opers_count_opt}x).\n')
+        f.write(
+            f'Orig operations count {opers_count_orig}, opt operations count {opers_count_opt} (speedup {opers_count_orig / opers_count_opt}x).\n')
         f.write(f'Results compare:\n')
         for x in res_opt:
-            f.write(f'{x}: diff = {[k-z if k is not None and z is not None else "Nan" for k,z in zip(np.array(res_orig[x]),np.array(res_opt[x]))]}\n')
+            f.write(
+                f'{x}: diff = {[k - z if k is not None and z is not None else "Nan" for k, z in zip(np.array(res_orig[x]), np.array(res_opt[x]))]}\n')
         f.write(f'{delim}\n')
         f.close()
+
 
 # ==================================================================================================
 
 
 if __name__ == '__main__':
-    # dump_all_cases()
-    run_case('021_bool.c')
+    dump_all_cases()
+    # run_case('021_bool.c')
 
 # ==================================================================================================

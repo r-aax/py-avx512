@@ -4,6 +4,7 @@ Emulator realization.
 
 import math
 
+
 # ==================================================================================================
 
 
@@ -103,6 +104,7 @@ class Emulator:
         emulated_operations_count = 0
 
         cur_node = ir.CFG.StartNode
+        cur_node.Counter += 1
         cur_oper_i = 0
 
         # Emulate while we can do it.
@@ -121,11 +123,13 @@ class Emulator:
                 new_node = None
                 for e in cur_node.OEdges:
                     if e.Jump == cur_oper:
+                        e.Counter += 1
                         new_node = e.Succ
                         break
                 if new_node is None:
                     raise Exception('py-avx512 : jump operation {0} to nowhere'.format(str(cur_oper)))
                 cur_node = new_node
+                cur_node.Counter += 1
                 cur_oper_i = 0
             else:
                 cur_oper_i += 1
@@ -195,6 +199,7 @@ class Emulator:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
 
         if self.debug:
-            print(n, ', '.join(f'{k}={k.Val}' for k in oper.Args), f'{oper.Res}={oper.Res.Val}' if oper.Res is not None else '')
+            print(n, ', '.join(f'{k}={k.Val}' for k in oper.Args),
+                  f'{oper.Res}={oper.Res.Val}' if oper.Res is not None else '')
 
 # ==================================================================================================
