@@ -7,8 +7,8 @@ import os
 import sem
 import tools
 
-
 # ==================================================================================================
+from pyavx512.tools.dependency_analyzer import DependencyAnalyzer
 
 
 def is_close(expected, actual, k, rel_tol=1e-09, abs_tol=0.1):
@@ -59,9 +59,12 @@ def run_case(name, input=None, result=None):
 
     parser = sem.Parser()
     cfg, ir = parser.parse(f'cases/{name}')
+    dep_analyzer = DependencyAnalyzer()
+    dep_analyzer.analyze(ir)
 
     ir.print()
     emu = tools.Emulator(True)
+
     if input is None:
         return
 
@@ -95,6 +98,7 @@ def dump_all_cases(names=None):
     parser_opt = sem.Parser()
     opt = tools.Optimizer()
     emu = tools.Emulator()
+    dep_analyzer = DependencyAnalyzer()
 
     if not os.path.isdir(output_path):
         os.makedirs(output_path)
@@ -115,6 +119,9 @@ def dump_all_cases(names=None):
             cfg_opt, ir_opt = parser_opt.parse(entry.path)
 
             opt.optimize(ir_opt)
+
+            dep_analyzer.analyze(ir_orig)
+            dep_analyzer.analyze(ir_opt)
 
             # Run original and optimized IR.
             input_data = {}
@@ -164,6 +171,6 @@ def dump_all_cases(names=None):
 
 if __name__ == '__main__':
     dump_all_cases()
-    # run_case('021_bool.c')
+    # run_case('008_pow_ternary.c')
 
 # ==================================================================================================

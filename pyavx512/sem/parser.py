@@ -83,11 +83,11 @@ class Parser:
             if n == 'Decl':  # variable declaration
                 self.add_register_if_not_ex(item.name)
                 if item.init is not None:
-                    self.process_assignment(ID(item.name), item.init, '=')
+                    self.process_assignment(ID(item.name), item.init, '=', self.ir.CurNode)
             elif n == 'Assignment':
-                self.process_assignment(item.lvalue, item.rvalue, item.op, None)
+                self.process_assignment(item.lvalue, item.rvalue, item.op, self.ir.CurNode)
             elif n == 'If':
-                self.create_if_node(item)
+                self.create_if_node(item, self.ir.CurNode)
             else:
                 raise Exception(f'Block item {n} is not implemented')
 
