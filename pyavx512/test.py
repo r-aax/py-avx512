@@ -6,150 +6,142 @@ import numpy as np
 import os
 import sem
 import tools
+import shutil
 
 # ==================================================================================================
 
 
-def is_close(expected, actual, k, rel_tol=1e-09, abs_tol=0.1):
+def write_and_close(filename, content):
     """
-    Check if expected and actual results are close.
+    Open file, write content to it and close.
 
     Parameters
     ----------
-    expected
-        Expected result.
-    actual
-        Actual result.
-    k
-        Parameter name.
-    rel_tol
-        Relative accuracy.
-    abs_tol
-        Absolute accuracy.
-
-    Returns
-    -------
-        True, if expected and actual results are close,
-        False, otherwise.
+    filename
+        Name of file.
+    content
+        Content.
     """
 
-    ok = abs(expected - actual) <= max(rel_tol * max(abs(expected), abs(actual)), abs_tol)
-
-    if not ok:
-        raise AssertionError(f'Param name {k}: got {actual}, expected {expected}.')
+    with open(filename, 'w') as f:
+        f.write(content)
+        f.close()
 
 # ==================================================================================================
 
 
-def run_case(name, input, result):
+def write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig):
     """
-    Run case with results check.
+    Write IO statistics to file.
 
     Parameters
     ----------
-    name
-        Case name.
-    input
+    f
+        File.
+    input_data
         Input data.
-    result
-        Correct results.
+    res
+        Result.
+    res_orig
+        Origin result.
+    oc
+        Opers count.
+    oc_orig
+        Origin opers count.
     """
-
-    parser = sem.Parser()
-    cfg, ir = parser.parse(f'cases/{name}')
-
-    ir.print()
-    emu = tools.Emulator(True)
-    data = emu.run(ir, input)
-
-    for k, v in result.items():
-        for i in range(len(v)):
-            is_close(result[k][i], data[k][i], k)
+    delim = '================================='
+    f.write(f'\n\n{delim}\nInput Data:\n')
+    for x in input_data:
+        f.write(f'\t{x} : {input_data[x]}\n')
+    f.write('Result Data:\n')
+    for x in res:
+        f.write(f'\t{x} : {np.array(res[x])}\n')
+        f.write(f'\t{x} : {np.array(res_orig[x])}\n')
+    f.write(f'Results compare:\n')
+    for x in res:
+        f.write(f'\t{x}: diff = {[k - z if k is not None and z is not None else "Nan" for k, z in zip(np.array(res[x]), np.array(res_orig[x]))]}\n')
+    f.write('Speedup:\n')
+    f.write(f'\toc = {oc}\n\torig_oc = {oc_orig}\n\tspeedup = {oc_orig / oc}\n')
 
 # ==================================================================================================
 
 
-def dump_all_cases(names=None):
+def run_cases(cases=None):
     """
-    Dump all cases from folder "cases".
+    Run cases.
 
     Parameters
     ----------
-    names
-        Names of cases.
+    cases
+        Names of cases for run.
     """
 
-    input_path = 'cases'
-    output_path = 'out'
+    # Paths for cases and out dir.
+    cases_path, out_path = 'cases', 'out'
 
-    parser_orig = sem.Parser()
-    parser_opt = sem.Parser()
-    opt = tools.Optimizer()
-    emu = tools.Emulator()
+    # Parser, optimizer and emulator.
+    parser, optimizer, emulator = sem.Parser(), tools.Optimizer(), tools.Emulator()
 
-    if not os.path.isdir(output_path):
-        os.makedirs(output_path)
+    # Scan cases folder and collect all names to run.
+    run_cases = [e.name.split('.')[0] for e in os.scandir(cases_path) if e.name.endswith('.c')]
+    if cases is not None:
+        run_cases = [case for case in run_cases if case in cases]
 
-    for entry in os.scandir(input_path):
-        if not names is None:
-            if not entry.name.split('.')[0] in names:
-                continue
-        if not entry.name.endswith('.c'):
-            continue
+    # Run stat.
+    run_stat = {}
 
-        f = open(entry.path, "r")
-        code = f.read()
-        f.close()
+    # Run all cases.
+    for case in run_cases:
 
+        # Source file name.
+        src_path = f'{cases_path}/{case}.c'
+
+        # New dir name.
+        dst_dir = f'{out_path}/{case}'
+        if not os.path.isdir(dst_dir):
+            os.makedirs(dst_dir)
+
+        # 00 - source code.
+        shutil.copy(src_path, f'{dst_dir}/00_source.txt')
+
+        # 01 - parse.
         try:
-            cfg_orig, ir_orig = parser_orig.parse(entry.path)
-            cfg_opt, ir_opt = parser_opt.parse(entry.path)
-            ir_orig_dump = ir_orig.dump()
-            opt.optimize(ir_opt)
-            ir_opt_dump = ir_opt.dump()
+            _, ir = parser.parse(src_path)
         except Exception as e:
-            ir_dump = f'Err: {e}'
             print(e)
-
-        # Run original and optimized IR.
+            write_and_close(f'{dst_dir}/01_parse.txt', f'Err: {e}')
+            run_stat[case] = 'PARSE_ERROR'
+            continue
+        # Generate input data.
         input_data = {}
-        for in_param in ir_orig.InParams:
+        for in_param in ir.InParams:
             input_data[in_param.Id] = np.random.uniform(-100.0, 100.0, 16)
-        res_orig, opers_count_orig = emu.run(ir_orig, input_data)
-        res_opt, opers_count_opt = emu.run(ir_opt, input_data)
+        # Emulate right results.
+        res_orig, oc_orig = emulator.run(ir, input_data)
+        with open(f'{dst_dir}/01_parse.txt', 'w') as f:
+            f.write(ir.dump())
+            write_input_and_res_data(f, input_data, res_orig, res_orig, oc_orig, oc_orig)
+            f.close()
 
-        f = open(f'{output_path}/{entry.name}.txt', "w")
-        delim = '----------------------------------------------------------------------'
+        # 02 - optimize.
+        optimizer.optimize(ir)
+        res, oc = emulator.run(ir, input_data)
+        with open(f'{dst_dir}/02_opt.txt', 'w') as f:
+            f.write(ir.dump())
+            write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig)
+            f.close()
+        run_stat[case] = 'OK'
 
-        # Print parse result.
-        f.write(f'Source code:\n{delim}\n{code}{delim}\n\n')
-        f.write(f'IR:\n{delim}\n{ir_orig_dump}{delim}\n\n')
-        f.write(f'Optimized IR:\n{delim}\n{ir_opt_dump}{delim}\n\n')
-
-        # Print run result.
-        f.write(f'Run:\n{delim}\n')
-        f.write(f'In data:\n')
-        for x in input_data:
-            f.write(f'{x}: {input_data[x]}\n')
-        f.write(f'{delim}\n')
-        f.write(f'Result orig:\n')
-        for x in res_orig:
-            f.write(f'{x}: {res_orig[x]}\n')
-        f.write(f'Result opt:\n')
-        for x in res_opt:
-            f.write(f'{x}: {res_opt[x]}\n')
-        f.write(f'Orig operations count {opers_count_orig}, opt operations count {opers_count_opt} (speedup {opers_count_orig / opers_count_opt}x).\n')
-        f.write(f'Results compare:\n')
-        for x in res_opt:
-            f.write(f'{x}: diff = {[k-z if k is not None and z is not None else "Nan" for k,z in zip(np.array(res_orig[x]),np.array(res_opt[x]))]}\n')
-        f.write(f'{delim}\n')
-        f.close()
+    # Stat.
+    print('Stat:')
+    for x in run_stat:
+        print(f'\t{x} : {run_stat[x]}')
 
 # ==================================================================================================
 
 
 if __name__ == '__main__':
 
-    dump_all_cases()
+    run_cases(cases=None)
 
 # ==================================================================================================
