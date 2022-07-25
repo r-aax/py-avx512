@@ -15,20 +15,40 @@ class Optimizer:
     # ----------------------------------------------------------------------------------------------
 
     def __init__(self):
-        pass
+        """
+        Constructor.
+        """
+
+        self.CurPhaseNumber = 0
 
     # ----------------------------------------------------------------------------------------------
 
-    def optimize(self, ir):
+    def set_cur_phase_number(self, cur_phase_number):
         """
-        Run optimization to IR.
+        Set currect phase number.
 
         Parameters
         ----------
-        ir : sem.IR
-            Intermediate representation.
+        cur_phase_number
+            Phase number.
         """
 
-        pass
+        self.CurPhaseNumber = cur_phase_number
+
+    # ----------------------------------------------------------------------------------------------
+
+    def optimize(self, ir, optimization_name):
+        """
+        Process of optimization.
+
+        Parameters
+        ----------
+        ir
+            Intermediate representation.
+        optimization_name
+            Name of optimization phase.
+        """
+
+        self.CurPhaseNumber += 1
 
 # ==================================================================================================

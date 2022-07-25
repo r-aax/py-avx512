@@ -26,7 +26,7 @@ class Emulator:
 
     # ----------------------------------------------------------------------------------------------
 
-    def run(self, ir, data):
+    def run(self, ir, data, reset_profile=False):
         """
         Run emulator.
 
@@ -37,12 +37,17 @@ class Emulator:
         data : dictionary
             Input data.
             Format if input data : { <name of parameter>: <array of values> }
+        reset_profile : Bool
+            Reset profile before run or not.
 
         Returns
         -------
             Output data and emulated operations count
             (tuple { data, opers_count }).
         """
+
+        if reset_profile:
+            ir.CFG.reset_profile()
 
         emulated_operations_count = 0
         cases = len(list(data.values())[0])

@@ -173,7 +173,7 @@ def dump_cases(cases=None):
             os.makedirs(dst_dir)
 
         # 00 - source code.
-        shutil.copy(src_path, f'{dst_dir}/00_source.txt')
+        shutil.copy(src_path, f'{dst_dir}/{case}_00_source.txt')
 
         # 01 - parse.
         try:
@@ -181,7 +181,7 @@ def dump_cases(cases=None):
             dep_analyzer.analyze(ir)
         except Exception as e:
             print(e)
-            write_and_close(f'{dst_dir}/01_parse.txt', f'Err: {e}')
+            write_and_close(f'{dst_dir}/{case}_01_parse.txt', f'Err: {e}')
             run_stat[case] = 'PARSE_ERROR'
             continue
         # Generate input data.
@@ -190,18 +190,21 @@ def dump_cases(cases=None):
             input_data[in_param.Id] = np.random.uniform(-100.0, 100.0, 16)
         # Emulate right results.
         res_orig, oc_orig = emulator.run(ir, input_data)
-        with open(f'{dst_dir}/01_parse.txt', 'w') as f:
+        with open(f'{dst_dir}/{case}_01_parse.txt', 'w') as f:
             f.write(ir.dump())
             write_input_and_res_data(f, input_data, res_orig, res_orig, oc_orig, oc_orig)
             f.close()
 
-        # 02 - optimize.
-        optimizer.optimize(ir)
-        res, oc = emulator.run(ir, input_data)
-        with open(f'{dst_dir}/02_opt.txt', 'w') as f:
-            f.write(ir.dump())
-            write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig)
-            f.close()
+        # 02 and sso on..
+        # Optimization.
+        optimizer.set_cur_phase_number(1)
+        for opt_name in ['cond_opt', 'cg']:
+            optimizer.optimize(ir, opt_name)
+            res, oc = emulator.run(ir, input_data, reset_profile=True)
+            with open(f'{dst_dir}/{case}_{optimizer.CurPhaseNumber:02}_{opt_name}.txt', 'w') as f:
+                f.write(ir.dump())
+                write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig)
+                f.close()
         run_stat[case] = 'OK'
 
     # Stat.
@@ -214,6 +217,6 @@ def dump_cases(cases=None):
 
 if __name__ == '__main__':
 
-    dump_cases(cases=None)
+    dump_cases()
 
 # ==================================================================================================

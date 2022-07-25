@@ -32,7 +32,11 @@ class Oper:
         self.Args = []
         self.Result = None
         self.Predct = None
+
+        # PredctV = True means that operation stays under direct predicate.
+        # PredctV = False means that operation stays under reversed predicate.
         self.PredctV = True
+
         self.PredOpers = []
         self.SuccOpers = []
 
@@ -100,6 +104,7 @@ class Oper:
             return False
 
         if self.Predct is None:
+            # No predicate - unconditional jump.
             return True
 
         return self.PredctV == self.Predct.Val
