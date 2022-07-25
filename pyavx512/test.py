@@ -7,6 +7,7 @@ import os
 import sem
 import tools
 import shutil
+from tools.dependency_analyzer import DependencyAnalyzer
 
 # ==================================================================================================
 
@@ -81,6 +82,8 @@ def run_cases(cases=None):
 
     # Parser, optimizer and emulator.
     parser, optimizer, emulator = sem.Parser(), tools.Optimizer(), tools.Emulator()
+    # Dependency analyzer.
+    dep_analyzer = DependencyAnalyzer()
 
     # Scan cases folder and collect all names to run.
     run_cases = [e.name.split('.')[0] for e in os.scandir(cases_path) if e.name.endswith('.c')]
@@ -107,6 +110,7 @@ def run_cases(cases=None):
         # 01 - parse.
         try:
             _, ir = parser.parse(src_path)
+            dep_analyzer.analyze(ir)
         except Exception as e:
             print(e)
             write_and_close(f'{dst_dir}/01_parse.txt', f'Err: {e}')
