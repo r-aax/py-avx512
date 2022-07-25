@@ -83,11 +83,11 @@ class Parser:
             if n == 'Decl':  # variable declaration
                 self.add_register_if_not_ex(item.name)
                 if item.init is not None:
-                    self.process_assignment(ID(item.name), item.init, '=')
+                    self.process_assignment(ID(item.name), item.init, '=', self.ir.CurNode)
             elif n == 'Assignment':
-                self.process_assignment(item.lvalue, item.rvalue, item.op, None)
+                self.process_assignment(item.lvalue, item.rvalue, item.op, self.ir.CurNode)
             elif n == 'If':
-                self.create_if_node(item)
+                self.create_if_node(item, self.ir.CurNode)
             else:
                 raise Exception(f'Block item {n} is not implemented')
 
@@ -123,6 +123,11 @@ class Parser:
 
     # ----------------------------------------------------------------------------------------------
 
+    def mov(self, from_reg, to_reg):
+        self.ir.new_oper('mov', args=[from_reg, to_reg])
+
+    # ----------------------------------------------------------------------------------------------
+
     def create_if_node(self, if_expr, node=None):
         """
             Parses if expression and creates start node for this expression.
@@ -141,17 +146,26 @@ class Parser:
 
         self.ir.set_cur_node(node)
 
-        left = self.process_binary_expression(if_expr.cond.left)
-        right = self.process_binary_expression(if_expr.cond.right)
-        operation = self.logical_oper[if_expr.cond.op]
-        p0 = operation(left, right)
+        n = get_type(if_expr.cond)
+        if n == 'ID':
+            p0 = self.logical_oper['=='](self.get_register(if_expr.cond.name), self.add_constant_if_not_ex('1'))
+        elif n == 'BinaryOp':
+            left = self.process_binary_expression(if_expr.cond.left)
+            right = self.process_binary_expression(if_expr.cond.right)
+            operation = self.logical_oper[if_expr.cond.op]
+            p0 = operation(left, right)
+        else:
+            raise Exception(f'Type {n} for if condition is not implemented.')
 
-        if_dict = {'True': if_expr.iftrue, 'False': if_expr.iffalse}
+        if_dict = {'True': if_expr.iftrue}
+        if if_expr.iffalse is not None:
+            if_dict['False'] = if_expr.iffalse
+
         self.process_if(if_dict, node, p0)
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_if(self, if_dict, n1, p0):
+    def process_if(self, if_dict, node, predicate):
         """
             Recursively parses body of if expression.
 
@@ -159,18 +173,18 @@ class Parser:
         ----------
         if_dict
             Dictionary with body of if expression.
-        n1
-            Operand standind for condition of if expression.
-        p0
-            Origin node of if expression.
+        node
+            Node where if expression is located.
+        predicate
+            Predicate of if expression.
         """
         # self.fill_edges_if_need()
 
         for k, v in if_dict.items():
             if get_type(v) == 'Compound' and len(v.block_items) != 0:
-                self.ir.set_cur_node(n1)
+                self.ir.set_cur_node(node)
                 n2 = self.cfg.new_node()
-                self.ir.jump(n2, p0, True if k == 'True' else False)
+                self.ir.jump(n2, predicate, True if k == 'True' else False)
                 self.process_block_items(v.block_items, n2)
             elif get_type(v) == 'If':
                 n2 = self.cfg.new_node()
@@ -182,8 +196,8 @@ class Parser:
                 p1 = operation(left, right)
 
                 if_dict = {'True': v.iftrue, 'False': v.iffalse}
-                self.ir.set_cur_node(n1)
-                self.ir.jump(n2, p0, True if k == 'True' else False)
+                self.ir.set_cur_node(node)
+                self.ir.jump(n2, predicate, True if k == 'True' else False)
 
                 self.ir.set_cur_node(n2)
                 self.process_if(if_dict, n2, p1)
@@ -218,7 +232,7 @@ class Parser:
             return self.process_func_call(expr)
         elif get_type(expr) == 'TernaryOp':
             register = self.ir.new_reg()
-            newnodes = self.process_ternary_op(expr, register, self.ir.CurNode)
+            newnodes = self.process_ternary_op(expr, register, 'no register name', self.ir.CurNode)
             node = self.cfg.new_node()
             for n in newnodes.values():
                 self.jump(n, node)
@@ -264,36 +278,44 @@ class Parser:
                 node = self.cfg.new_node()
 
             self.ir.set_cur_node(node)
-            right_oper = None
+            left_oper_is_predicate = False
             n = get_type(r_value)
             if n == 'Constant' or n == 'ID':
                 right_oper = self.process_binary_expression(r_value)
             elif n == 'BinaryOp':
-                math_operation = self.math_oper[r_value.op]
                 left = self.process_binary_expression(r_value.left)
                 right = self.process_binary_expression(r_value.right)
-                right_oper = math_operation(left, right)
+
+                if r_value.op in self.math_oper:
+                    operation = self.math_oper[r_value.op]
+                else:
+                    operation = self.logical_oper[r_value.op]
+
+                right_oper = operation(left, right)
             elif n == 'TernaryOp':
                 register_to_store = self.get_param_or_register(l_value.name)
-                return self.process_ternary_op(r_value, register_to_store, node)
-
-                return
-
+                return self.process_ternary_op(r_value, register_to_store, l_value.name, node)
             elif n == 'FuncCall':
                 right_oper = self.process_func_call(r_value)
             else:
                 raise Exception(f'Rvalue {get_type(r_value)} is not implemented. - {r_value}')
 
             left_oper = self.get_param_or_register(l_value.name)
-            self.ir.store(right_oper, left_oper)
-
-            # self.fill_edges_if_need()
+            self.store_or_mov(right_oper, left_oper, l_value.name)
         else:
             raise Exception(f'Operation {op} is not implemented.')
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_ternary_op(self, ternar, register_to_store, node):
+    def store_or_mov(self, from_arg, to_arg, to_name):
+        if self.is_out_param(to_name):
+            self.ir.store(from_arg, to_arg)
+        else:
+            self.mov(from_arg, to_arg)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def process_ternary_op(self, ternar, register_to_store, register_name, node):
         left = self.process_binary_expression(ternar.cond.left)
         right = self.process_binary_expression(ternar.cond.right)
         right_oper = self.logical_oper[ternar.cond.op](left, right)
@@ -303,9 +325,8 @@ class Parser:
         for k in if_list:
             self.ir.jump(k[2], right_oper, k[0] == 'True')
             value = self.process_binary_expression(k[1])
-            # left_oper = self.get_param_or_register(register_to_store.name)
             self.ir.set_cur_node(k[2])
-            self.ir.store(value, register_to_store)
+            self.store_or_mov(value, register_to_store, register_name)
             self.ir.set_cur_node(node)
 
         return {'True': iftrue, 'False': iffalse}

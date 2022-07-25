@@ -2,6 +2,7 @@
 Operation.
 """
 
+
 # ==================================================================================================
 
 
@@ -32,6 +33,8 @@ class Oper:
         self.Result = None
         self.Predct = None
         self.PredctV = True
+        self.PredOpers = []
+        self.SuccOpers = []
 
     # ----------------------------------------------------------------------------------------------
 
@@ -46,8 +49,7 @@ class Oper:
         """
 
         # Issue #6.
-        id_str = f'{self.Id:2d}.'
-        name_str = f'{self.Name:5}'
+        id_str, name_str = self.get_id(), self.get_name()
         if self.Args:
             args_str = ', '.join(['{0:>4}'.format(str(a)) for a in self.Args])
         else:
@@ -64,9 +66,22 @@ class Oper:
             tmp = '{0}{1}'.format(s, str(self.Predct))
             predct_str = '? {0:>4}'.format(tmp)
         else:
-            predct_str =''
+            predct_str = ''
 
-        return f'{id_str} {name_str} {args_str:12} {res_str:7} {predct_str:8}'
+        pred_opers = ', '.join(f'{pred.get_id()} {pred.get_name()}' for pred in self.PredOpers)
+        succ_opers = ', '.join(f'{succ.get_id()} {succ.get_name()}' for succ in self.SuccOpers)
+
+        return f'{id_str} {name_str} {args_str:12} {res_str:7} {predct_str:8} (pred = [{pred_opers}], succ = [{succ_opers}])'
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_name(self):
+        return f'{self.Name:5}'
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_id(self):
+        return f'{self.Id:2d}.'
 
     # ----------------------------------------------------------------------------------------------
 

@@ -4,6 +4,7 @@ Control flow graph realization.
 
 import cfg
 
+
 # ==================================================================================================
 
 
@@ -116,6 +117,15 @@ class Graph:
         self.Edges.append(edge)
 
         return edge
+
+    # ----------------------------------------------------------------------------------------------
+
+    def reset_profile(self):
+        for node in self.Nodes:
+            node.Counter = 0
+
+        for edge in self.Edges:
+            edge.Counter = 0
 
     # ----------------------------------------------------------------------------------------------
 
