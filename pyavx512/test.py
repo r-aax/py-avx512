@@ -12,6 +12,74 @@ from tools.dependency_analyzer import DependencyAnalyzer
 # ==================================================================================================
 
 
+def is_close(expected, actual, k, rel_tol=1e-09, abs_tol=0.1):
+    """
+    Check if expected and actual results are close.
+
+    Parameters
+    ----------
+    expected
+        Expected result.
+    actual
+        Actual result.
+    k
+        Parameter name.
+    rel_tol
+        Relative accuracy.
+    abs_tol
+        Absolute accuracy.
+
+    Returns
+    -------
+        True, if expected and actual results are close,
+        False, otherwise.
+    """
+
+    ok = abs(expected - actual) <= max(rel_tol * max(abs(expected), abs(actual)), abs_tol)
+
+    if not ok:
+        raise AssertionError(f'Param name {k}: got {actual}, expected {expected}.')
+
+# ==================================================================================================
+
+
+def run_case(name, input=None, result=None):
+    """
+    Run case with results check.
+
+    Parameters
+    ----------
+    name
+        Case name.
+    input
+        Input data.
+    result
+        Correct results.
+    """
+
+    parser = sem.Parser()
+    cfg, ir = parser.parse(f'cases/{name}.c')
+    dep_analyzer = DependencyAnalyzer()
+    dep_analyzer.analyze(ir)
+
+    ir.print()
+    emu = tools.Emulator(True)
+
+    if input is None:
+        return
+
+    data = emu.run(ir, input)
+
+    if result is None:
+        return
+
+    for k, v in result.items():
+        for i in range(len(v)):
+            is_close(result[k][i], data[k][i], k)
+
+# ==================================================================================================
+
+
 def write_and_close(filename, content):
     """
     Open file, write content to it and close.
@@ -67,7 +135,7 @@ def write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig):
 # ==================================================================================================
 
 
-def run_cases(cases=None):
+def dump_cases(cases=None):
     """
     Run cases.
 
@@ -146,6 +214,6 @@ def run_cases(cases=None):
 
 if __name__ == '__main__':
 
-    run_cases(cases=None)
+    dump_cases(cases=None)
 
 # ==================================================================================================
