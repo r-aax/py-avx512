@@ -155,42 +155,42 @@ class Emulator:
 
         n = oper.Name
 
-        if n == 'load':
+        if n == 'fload':
             oper.Res.Val = oper.Args[0].Val
 
-        elif n == 'eq':
+        elif n == 'fcmpeq':
             oper.Res.Val = oper.Args[0].Val == oper.Args[1].Val
-        elif n == 'cmpge':
+        elif n == 'fcmpge':
             oper.Res.Val = oper.Args[0].Val > oper.Args[1].Val
-        elif n == 'cmplt':
+        elif n == 'fcmplt':
             oper.Res.Val = oper.Args[0].Val < oper.Args[1].Val
-        elif n == 'cmplte':
+        elif n == 'fcmplte':
             oper.Res.Val = oper.Args[0].Val <= oper.Args[1].Val
-        elif n == 'l_and':
+        elif n == 'pand':
             oper.Res.Val = oper.Args[0].Val and oper.Args[1].Val
 
-        elif n == 'add':
+        elif n == 'fadd':
             oper.Res.Val = oper.Args[0].Val + oper.Args[1].Val
-        elif n == 'sub':
+        elif n == 'fsub':
             oper.Res.Val = oper.Args[0].Val - oper.Args[1].Val
-        elif n == 'mul':
+        elif n == 'fmul':
             oper.Res.Val = oper.Args[0].Val * oper.Args[1].Val
-        elif n == 'div':
+        elif n == 'fdiv':
             oper.Res.Val = oper.Args[0].Val / oper.Args[1].Val if oper.Args[1].Val != 0 else float('inf')
 
-        elif n == 'pow':
+        elif n == 'fpow':
             try:
                 oper.Res.Val = math.pow(oper.Args[0].Val, oper.Args[1].Val)
             except ValueError as e:
                 print(e)
                 oper.Res.Val = math.nan
-        elif n == 'sqrt':
+        elif n == 'fsqrt':
             oper.Res.Val = math.sqrt(oper.Args[0].Val)
 
         elif n == 'unary_minus':
             oper.Res.Val = -oper.Args[0].Val
 
-        elif n == 'mov':
+        elif n == 'fmov':
             oper.Args[1].Val = oper.Args[0].Val
         elif n == 'jump':
             # Jump operation has no calc semantic.
@@ -198,7 +198,7 @@ class Emulator:
         elif n == 'nop':
             # Empty operation.
             pass
-        elif n == 'store':
+        elif n == 'fstore':
             oper.Args[1].Val = oper.Args[0].Val
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))

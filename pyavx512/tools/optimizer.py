@@ -86,5 +86,5 @@ class Optimizer:
                 if oper.Id in deleted_oper_ids: node.Opers.remove(oper)
 
     def is_const_cmpge(self, oper):
-        return oper.Name == 'cmpge' and all(arg.Kind == 'c' for arg in oper.Args) and len(oper.SuccOpers) > 0
+        return oper.Name == 'fcmpge' and all(arg.Kind == 'c' for arg in oper.Args) and len(oper.SuccOpers) > 0
 # ==================================================================================================

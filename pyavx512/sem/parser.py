@@ -36,22 +36,22 @@ class Parser:
         self.constants = dict()
         self.nodes_before = []
         self.math_oper = {
-            '+': self.ir.add,
-            '-': self.ir.sub,
-            '*': self.ir.mul,
-            '/': self.ir.div
+            '+': self.ir.fadd,
+            '-': self.ir.fsub,
+            '*': self.ir.fmul,
+            '/': self.ir.fdiv
         }
         self.logical_oper = {
-            '>': self.ir.cmpge,
-            '<': self.ir.cmplt,
-            '<=': self.ir.cmplte,
-            '>=': self.ir.cmpge,
-            '==': self.ir.eq,
-            '&&': self.ir.l_and,
+            '>': self.ir.fcmpge,
+            '<': self.ir.fcmplt,
+            '<=': self.ir.fcmplte,
+            '>=': self.ir.fcmpge,
+            '==': self.ir.fcmpeq,
+            '&&': self.ir.pand,
         }
         self.func_call = {
-            'pow': self.ir.pow,
-            'sqrt': self.ir.sqrt,
+            'pow': self.ir.fpow,
+            'sqrt': self.ir.fsqrt,
         }
         self.unary = {
             '-': 'unary_minus',
@@ -76,7 +76,7 @@ class Parser:
         self.ir.set_cur_node(node)
         self.nodes_before.append(node)
         for k in self.ir.InParams:
-            self.in_params[k.Id] = self.ir.load(k.Id)
+            self.in_params[k.Id] = self.ir.fload(k.Id)
 
         for item in body.block_items:
             n = get_type(item)
@@ -123,8 +123,8 @@ class Parser:
 
     # ----------------------------------------------------------------------------------------------
 
-    def mov(self, from_reg, to_reg):
-        self.ir.new_oper('mov', args=[from_reg, to_reg])
+    def fmov(self, from_reg, to_reg):
+        self.ir.new_oper('fmov', args=[from_reg, to_reg])
 
     # ----------------------------------------------------------------------------------------------
 
@@ -309,9 +309,9 @@ class Parser:
 
     def store_or_mov(self, from_arg, to_arg, to_name):
         if self.is_out_param(to_name):
-            self.ir.store(from_arg, to_arg)
+            self.ir.fstore(from_arg, to_arg)
         else:
-            self.mov(from_arg, to_arg)
+            self.fmov(from_arg, to_arg)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -339,7 +339,7 @@ class Parser:
 
         args = [self.process_binary_expression(op) for op in func.args]
         reg = self.ir.new_reg()
-        self.ir.new_oper(func.name.name, args=args, res=reg)
+        self.ir.new_oper(f'f{func.name.name}', args=args, res=reg)
         return reg
 
     # ----------------------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ class Parser:
 
     def load_in_param(self, name):
         if name not in self.in_params:
-            self.in_params[name] = self.ir.load(name)
+            self.in_params[name] = self.ir.fload(name)
 
         return self.in_params[name]
 

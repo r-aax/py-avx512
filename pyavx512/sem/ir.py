@@ -267,7 +267,7 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def load(self, src, predct=None, predct_v=True):
+    def fload(self, src, predct=None, predct_v=True):
         """
         Create load operation.
 
@@ -287,14 +287,14 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper('load', args=[self.in_param(src)],
+        self.new_oper('fload', args=[self.in_param(src)],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def store(self, v, dst, predct=None, predct_v=True):
+    def fstore(self, v, dst, predct=None, predct_v=True):
         """
         Create load operation.
 
@@ -310,12 +310,12 @@ class IR:
             Value of predct to jump.
         """
 
-        self.new_oper('store', args=[v, dst],
+        self.new_oper('fstore', args=[v, dst],
                       predct=predct, predct_v=predct_v)
 
     # ----------------------------------------------------------------------------------------------
 
-    def add(self, v1, v2, predct=None, predct_v=True):
+    def fadd(self, v1, v2, predct=None, predct_v=True):
         """
         Create add operation.
 
@@ -337,14 +337,14 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper('add', args=[v1, v2],
+        self.new_oper('fadd', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def sub(self, v1, v2, predct=None, predct_v=True):
+    def fsub(self, v1, v2, predct=None, predct_v=True):
         """
         Create sub operation.
 
@@ -366,14 +366,14 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper('sub', args=[v1, v2],
+        self.new_oper('fsub', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def mul(self, v1, v2, predct=None, predct_v=True):
+    def fmul(self, v1, v2, predct=None, predct_v=True):
         """
         Create mul operation.
 
@@ -395,14 +395,14 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper('mul', args=[v1, v2],
+        self.new_oper('fmul', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def pow(self, v1, v2, predct=None, predct_v=True):
+    def fpow(self, v1, v2, predct=None, predct_v=True):
         """
         Create pow operation.
 
@@ -424,14 +424,14 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper('pow', args=[v1, v2],
+        self.new_oper('fpow', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def sqrt(self, v1, v2, predct=None, predct_v=True):
+    def fsqrt(self, v1, v2, predct=None, predct_v=True):
         """
         Create sqrt operation.
 
@@ -460,7 +460,7 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def div(self, v1, v2, predct=None, predct_v=True):
+    def fdiv(self, v1, v2, predct=None, predct_v=True):
         """
         Create div operation.
 
@@ -482,16 +482,16 @@ class IR:
 
         res = self.new_reg()
 
-        self.new_oper('div', args=[v1, v2],
+        self.new_oper('fdiv', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def cmpge(self, v1, v2, predct=None, predct_v=True):
+    def fcmpge(self, v1, v2, predct=None, predct_v=True):
         """
-        Create cmpge operation.
+        Create fcmpge operation.
 
         Parameters
         ----------
@@ -511,14 +511,43 @@ class IR:
 
         res = self.new_predicate()
 
-        self.new_oper('cmpge', args=[v1, v2],
+        self.new_oper('fcmpge', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def cmplt(self, v1, v2, predct=None, predct_v=True):
+    def fcmplt(self, v1, v2, predct=None, predct_v=True):
+        """
+        Create fcmplt operation.
+
+        Parameters
+        ----------
+        v1 : sem.Operand
+            First operand.
+        v2 : sem.Operand
+            Second operand.
+        predct : sem.Operand
+            Predicate.
+        predct_v : Bool
+            Value of predct to jump.
+
+        Returns
+        -------
+            Result.
+        """
+
+        res = self.new_predicate()
+
+        self.new_oper('fcmplt', args=[v1, v2],
+                      res=res, predct=predct, predct_v=predct_v)
+
+        return res
+
+    # ----------------------------------------------------------------------------------------------
+
+    def fcmplte(self, v1, v2, predct=None, predct_v=True):
         """
         Create cmplt operation.
 
@@ -540,16 +569,16 @@ class IR:
 
         res = self.new_predicate()
 
-        self.new_oper('cmplt', args=[v1, v2],
+        self.new_oper('fcmplte', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def cmplte(self, v1, v2, predct=None, predct_v=True):
+    def fcmpeq(self, v1, v2, predct=None, predct_v=True):
         """
-        Create cmplt operation.
+        Create fcmpeq operation.
 
         Parameters
         ----------
@@ -569,43 +598,14 @@ class IR:
 
         res = self.new_predicate()
 
-        self.new_oper('cmplte', args=[v1, v2],
+        self.new_oper('fcmpeq', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
 
     # ----------------------------------------------------------------------------------------------
 
-    def eq(self, v1, v2, predct=None, predct_v=True):
-        """
-        Create eq operation.
-
-        Parameters
-        ----------
-        v1 : sem.Operand
-            First operand.
-        v2 : sem.Operand
-            Second operand.
-        predct : sem.Operand
-            Predicate.
-        predct_v : Bool
-            Value of predct to jump.
-
-        Returns
-        -------
-            Result.
-        """
-
-        res = self.new_predicate()
-
-        self.new_oper('eq', args=[v1, v2],
-                      res=res, predct=predct, predct_v=predct_v)
-
-        return res
-
-    # ----------------------------------------------------------------------------------------------
-
-    def l_and(self, v1, v2, predct=None, predct_v=True):
+    def pand(self, v1, v2, predct=None, predct_v=True):
         """
         Create logical and operation.
 
@@ -627,7 +627,7 @@ class IR:
 
         res = self.new_predicate()
 
-        self.new_oper('l_and', args=[v1, v2],
+        self.new_oper('pand', args=[v1, v2],
                       res=res, predct=predct, predct_v=predct_v)
 
         return res
