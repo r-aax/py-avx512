@@ -214,6 +214,8 @@ class Emulator:
             oper.Res.Val = oper.Args[0].Val and oper.Args[1].Val
         elif n == 'pandn':
             oper.Res.Val = oper.Args[0].Val and not oper.Args[1].Val
+        elif n == 'fabs':
+            oper.Res.Val = abs(oper.Args[0].Val)
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
 

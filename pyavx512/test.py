@@ -79,7 +79,8 @@ def write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig, detail_p
 # ==================================================================================================
 
 
-def dump_cases(cases=None):
+def dump_cases(cases=None,
+               black_hole=True):
     """
     Run cases.
 
@@ -121,19 +122,19 @@ def dump_cases(cases=None):
         shutil.copy(src_path, f'{dst_dir}/{case}_00_source.txt')
 
         # 01 - parse.
-        # try:
-        _, ir = parser.parse(src_path)
-        dep_analyzer.analyze(ir)
-        #except Exception as e:
-        #    print(e)
-        #    write_and_close(f'{dst_dir}/{case}_01_parse.txt', f'Err: {e}')
-        #    run_stat[case] = 'PARSE_ERROR'
-        #    continue
+        try:
+            _, ir = parser.parse(src_path)
+            dep_analyzer.analyze(ir)
+        except Exception as e:
+            print(e)
+            write_and_close(f'{dst_dir}/{case}_01_parse.txt', f'Err: {e}')
+            run_stat[case] = 'PARSE_ERROR'
+            continue
 
         # Generate input data.
         input_data = {}
         for in_param in ir.InParams:
-            input_data[in_param.Id] = np.random.uniform(0.0, 2.0, 1000)
+            input_data[in_param.Id] = np.random.uniform(1.0, 2.0, 100)
         # Emulate right results.
         res_orig, oc_orig = emulator.run(ir, input_data)
         with open(f'{dst_dir}/{case}_01_parse.txt', 'w') as f:
@@ -144,13 +145,24 @@ def dump_cases(cases=None):
         # 02 and sso on..
         # Optimization.
         optimizer.set_cur_phase_number(1)
-        for opt_name in ['merge', 'low_prob', 'predct']:
+        if black_hole:
+            phases = ['merge', 'low_prob', 'predct']
+        else:
+            phases = ['merge', 'predct']
+        for opt_name in phases:
             optimizer.optimize(ir, opt_name)
             res, oc = emulator.run(ir, input_data, reset_profile=True)
             with open(f'{dst_dir}/{case}_{optimizer.CurPhaseNumber:02}_{opt_name}.txt', 'w') as f:
                 f.write(ir.dump())
                 write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig)
                 f.close()
+
+        # Generation of the code.
+        optimizer.CurPhaseNumber += 1
+        with open(f'{dst_dir}/{case}_{optimizer.CurPhaseNumber:02}_cg.txt', 'w') as f:
+            tools.codegenerator.cg(f, ir)
+            f.close()
+
         run_stat[case] = f'OK (speedup {oc_orig / oc})'
 
     # Stat.
@@ -163,6 +175,7 @@ def dump_cases(cases=None):
 
 if __name__ == '__main__':
 
-    dump_cases(cases=None)
+    dump_cases(cases=None,
+               black_hole=True)
 
 # ==================================================================================================
