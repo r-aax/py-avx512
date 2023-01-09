@@ -21,7 +21,13 @@ class Optimizer:
         """
 
         self.CurPhaseNumber = 0
-        self.OptAction = {"cond_opt": self.cond_opt}
+        self.OptAction =\
+            {
+                'cond_opt': self.cond_opt,
+                'merge': self.merge,
+                'low_prob': self.low_prob,
+                'predct': self.predct
+            }
 
     # ----------------------------------------------------------------------------------------------
 
@@ -56,6 +62,7 @@ class Optimizer:
             self.OptAction[optimization_name](ir)
 
     # ----------------------------------------------------------------------------------------------
+
     def cond_opt(self, ir):
         """
         Remove cmpge operators with constants.
@@ -87,4 +94,78 @@ class Optimizer:
 
     def is_const_cmpge(self, oper):
         return oper.Name == 'fcmpge' and all(arg.Kind == 'c' for arg in oper.Args) and len(oper.SuccOpers) > 0
+
+    # ----------------------------------------------------------------------------------------------
+
+    def merge(self, ir):
+
+        # For each edge add oper por into begin of node.
+        for edge in ir.CFG.Edges:
+            jump_oper = edge.Jump
+            p = jump_oper.Predct
+            oname = 'pmov' if jump_oper.PredctV else 'pnot'
+            res = ir.new_predicate()
+            succ_node = edge.Succ
+            ir.new_oper(oname, args=[p], res=res, predct=None, predct_v=True,
+                        cur_node=succ_node, oper_after=None)
+
+            oi = 1
+            while True:
+                if oi >= len(succ_node.Opers):
+                    break
+                op = succ_node.Opers[oi]
+                if op.Predct is None:
+                    op.Predct = res
+                    op.PredctV = True
+                    oi += 1
+                    continue
+                else:
+                    # Make new predicate generation operation and shift io on 2.
+                    producer = op.Predct.Producer
+                    oname2 = 'pand' if op.PredctV else 'pandn'
+                    res2 = ir.new_predicate()
+                    ir.new_oper(oname2, args=[res, op.Predct], res=res2, predct=None, predct_v=True,
+                                cur_node=succ_node, oper_after=producer)
+                    op.Predct = res2
+                    op.PredctV = True
+                    oi += 2
+                    continue
+
+        # Now we can delete all nodes.
+        new_opers = []
+        for node in ir.CFG.Nodes:
+            for op in node.Opers:
+                if op.Name != 'jump':
+                    op.Counter = node.Counter
+                    new_opers.append(op)
+        start_node = ir.CFG.Nodes[0]
+        start_node.IEdges = []
+        start_node.OEdges = []
+        start_node.Opers = new_opers
+        ir.CFG.Nodes = [start_node]
+        ir.CFG.Edges = []
+        ir.Opers = new_opers
+
+    def low_prob(self, ir):
+        start_node = ir.CFG.Nodes[0]
+        start_node.Opers = [op for op in start_node.Opers if op.Counter > 0]
+        ir.Opers = start_node.Opers
+
+    def predct(self, ir):
+        opers = ir.Opers
+        for p in ir.Predicates:
+            producer = p.Producer
+            if producer.Name == 'pmov':
+                new_p = producer.Args[0]
+                for op in opers:
+                    for ai in range(len(op.Args)):
+                        if op.Args[ai] == p:
+                            op.Args[ai] = new_p
+                    if op.Predct == p:
+                        op.Predct = new_p
+                if producer in opers:
+                    opers.remove(producer)
+        ir.Opers = opers
+        ir.CFG.Nodes[0].Opers = opers
+
 # ==================================================================================================

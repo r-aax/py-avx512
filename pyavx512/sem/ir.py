@@ -230,7 +230,8 @@ class IR:
 
     # ----------------------------------------------------------------------------------------------
 
-    def new_oper(self, name, args=[], res=None, predct=None, predct_v=True):
+    def new_oper(self, name, args=[], res=None, predct=None, predct_v=True,
+                 cur_node=None, oper_after=None):
         """
         Create new oper.
 
@@ -261,7 +262,15 @@ class IR:
         oper.Predct = predct
         oper.PredctV = predct_v
         self.Opers.append(oper)
-        self.CurNode.Opers.append(oper)
+
+        if cur_node is None:
+            self.CurNode.Opers.append(oper)
+        else:
+            if oper_after is None:
+                index = 0
+            else:
+                index = cur_node.Opers.index(oper_after) + 1
+            cur_node.Opers.insert(index, oper)
 
         return oper.Res
 

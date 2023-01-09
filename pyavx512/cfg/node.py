@@ -39,16 +39,29 @@ class Node:
 
     # ----------------------------------------------------------------------------------------------
 
+    def is_start_node(self):
+        return self.IEdges == []
+
+    # ----------------------------------------------------------------------------------------------
+
+    def is_stop_node(self):
+        return self.OEdges == []
+
+    # ----------------------------------------------------------------------------------------------
+
     def dump(self):
         """
         Dump node.
         """
 
+        start_str = 'START ' if self.is_start_node() else ''
+        stop_str = 'STOP ' if self.is_stop_node() else ''
+
         # Head.
-        start = 'CFG Node {0} (cnt = {1}):'.format(self.Id, self.Counter)
+        start = '{0}{1}CFG Node {2} (cnt = {3}):'.format(start_str, stop_str, self.Id, self.Counter)
 
         # Opers.
-        opers = '\n'.join('\t{0}'.format(oper) for oper in self.Opers)
+        opers = '\n'.join('{0}'.format(oper) for oper in self.Opers)
 
         # Foot.
         edges = 'Edges: {0}'.format(', '.join([str(e) for e in self.OEdges]))

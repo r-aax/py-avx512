@@ -30,7 +30,7 @@ class Oper:
 
         # Operation can have several arguments, one result and one predicate.
         self.Args = []
-        self.Result = None
+        self.Res = None
         self.Predct = None
 
         # PredctV = True means that operation stays under direct predicate.
@@ -75,12 +75,16 @@ class Oper:
         pred_opers = ', '.join(f'{pred.get_id()} {pred.get_name()}' for pred in self.PredOpers)
         succ_opers = ', '.join(f'{succ.get_id()} {succ.get_name()}' for succ in self.SuccOpers)
 
-        return f'{id_str} {name_str} {args_str:12} {res_str:7} {predct_str:8} (pred = [{pred_opers}], succ = [{succ_opers}])'
+        oper_str = f'    {id_str} {name_str} {args_str:12} {res_str:7} {predct_str:8} ('
+        # oper_str_len = len(oper_str)
+        # next_line_shift = ' ' * oper_str_len
+
+        return f'{oper_str}pred = [{pred_opers}], succ = [{succ_opers}])'
 
     # ----------------------------------------------------------------------------------------------
 
     def get_name(self):
-        return f'{self.Name:5}'
+        return f'{self.Name:6}'
 
     # ----------------------------------------------------------------------------------------------
 

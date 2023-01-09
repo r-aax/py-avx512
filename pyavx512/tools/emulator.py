@@ -175,6 +175,10 @@ class Emulator:
             oper.Res.Val = oper.Args[0].Val - oper.Args[1].Val
         elif n == 'fmul':
             oper.Res.Val = oper.Args[0].Val * oper.Args[1].Val
+        elif n == 'fmin':
+            oper.Res.Val = min(oper.Args[0].Val, oper.Args[1].Val)
+        elif n == 'fmax':
+            oper.Res.Val = max(oper.Args[0].Val, oper.Args[1].Val)
         elif n == 'fdiv':
             oper.Res.Val = oper.Args[0].Val / oper.Args[1].Val if oper.Args[1].Val != 0 else float('inf')
 
@@ -200,6 +204,16 @@ class Emulator:
             pass
         elif n == 'fstore':
             oper.Args[1].Val = oper.Args[0].Val
+        elif n == 'pmov':
+            oper.Res.Val = oper.Args[0].Val
+        elif n == 'pnot':
+            oper.Res.Val = not oper.Args[0].Val
+        elif n == 'por':
+            oper.Res.Val = oper.Args[0].Val or oper.Args[1].Val
+        elif n == 'pand':
+            oper.Res.Val = oper.Args[0].Val and oper.Args[1].Val
+        elif n == 'pandn':
+            oper.Res.Val = oper.Args[0].Val and not oper.Args[1].Val
         else:
             raise Exception('py-avx512 : unknown operation {0}'.format(oper))
 
