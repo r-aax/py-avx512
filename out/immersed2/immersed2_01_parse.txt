@@ -1,0 +1,45 @@
+	in_params = [i/kind, i/r, i/u, i/v, i/w, i/p]
+	out_params = [o/ru, o/rv, o/rw, o/E]
+
+START CFG Node 0 (cnt = 100):
+     0. fload  i/kind       ->   r0          (pred = [], succ = [ 6. fcmpge])
+     1. fload   i/r         ->   r1          (pred = [], succ = [])
+     2. fload   i/u         ->   r2          (pred = [], succ = [])
+     3. fload   i/v         ->   r3          (pred = [], succ = [])
+     4. fload   i/w         ->   r4          (pred = [], succ = [])
+     5. fload   i/p         ->   r5          (pred = [], succ = [])
+     6. fcmpge   r0, c.1.9  ->   p0          (pred = [ 0. fload ], succ = [ 7. jump  ])
+     7. jump                        ?   p0   (pred = [ 6. fcmpge], succ = [])
+Edges: [7. 0 -> 1, cnt = 14, prob = 0.14]
+
+STOP CFG Node 1 (cnt = 14):
+     8. fmul     r1,   r2   ->   r6          (pred = [], succ = [ 9. fstore])
+     9. fstore   r6, o/ru                    (pred = [ 8. fmul  ], succ = [])
+    10. fmul     r1,   r3   ->   r7          (pred = [], succ = [11. fstore])
+    11. fstore   r7, o/rv                    (pred = [10. fmul  ], succ = [])
+    12. fmul     r1,   r4   ->   r8          (pred = [], succ = [13. fstore])
+    13. fstore   r8, o/rw                    (pred = [12. fmul  ], succ = [])
+    14. fmul   c.0.5,   r1  ->   r9          (pred = [], succ = [20. fmul  ])
+    15. fmul     r2,   r2   ->  r10          (pred = [], succ = [17. fadd  ])
+    16. fmul     r3,   r3   ->  r11          (pred = [], succ = [17. fadd  ])
+    17. fadd    r10,  r11   ->  r12          (pred = [15. fmul  , 16. fmul  ], succ = [19. fadd  ])
+    18. fmul     r4,   r4   ->  r13          (pred = [], succ = [19. fadd  ])
+    19. fadd    r12,  r13   ->  r14          (pred = [17. fadd  , 18. fmul  ], succ = [20. fmul  ])
+    20. fmul     r9,  r14   ->  r15          (pred = [14. fmul  , 19. fadd  ], succ = [23. fadd  ])
+    21. fsub   c.1.4, c.1.0 ->  r16          (pred = [], succ = [22. fdiv  ])
+    22. fdiv     r5,  r16   ->  r17          (pred = [21. fsub  ], succ = [23. fadd  ])
+    23. fadd    r15,  r17   ->  r18          (pred = [20. fmul  , 22. fdiv  ], succ = [24. fstore])
+    24. fstore  r18,  o/E                    (pred = [23. fadd  ], succ = [])
+Edges: 
+
+
+=================================
+Results compare:
+	ru: diff = ['Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 0.0, 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan']
+	rv: diff = ['Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 0.0, 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan']
+	rw: diff = ['Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 0.0, 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan']
+	E: diff = ['Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 0.0, 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 0.0, 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 0.0, 'Nan', 'Nan', 'Nan', 'Nan', 'Nan', 'Nan']
+Speedup:
+	oc = 1038
+	orig_oc = 1038
+	speedup = 1.0

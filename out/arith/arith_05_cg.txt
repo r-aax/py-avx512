@@ -1,0 +1,12 @@
+{
+	r0 = _mm512_load_ps(&a[i]);
+	r1 = _mm512_load_ps(&b[i]);
+	r2 = _mm512_load_ps(&c[i]);
+	r3 = _mm512_sqrt_ps(r0);
+	_mm512_store_ps(&x[i], r3);
+	r4 = _mm512_min_ps(r0, r1);
+	_mm512_store_ps(&y[i], r4);
+	r5 = _mm512_mul_ps(r0, r1);
+	r6 = _mm512_add_ps(r5, r2);
+	_mm512_store_ps(&z[i], r6);
+}

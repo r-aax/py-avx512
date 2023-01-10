@@ -1,0 +1,8 @@
+{
+	r0 = _mm512_load_ps(&a[i]);
+	r1 = _mm512_load_ps(&b[i]);
+	p0 = _mm512_cmpge_ps_mask(r0, r1)
+	_mm512_mask_store_ps(&c[i], p0, r0);
+	p2 = ~p0;
+	_mm512_mask_store_ps(&c[i], p2, r1);
+}

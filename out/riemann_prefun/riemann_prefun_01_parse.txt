@@ -1,0 +1,64 @@
+	in_params = [i/p, i/dk, i/pk, i/ck]
+	out_params = [o/f, o/fd]
+
+START CFG Node 0 (cnt = 100):
+     0. fload   i/p         ->   r0          (pred = [], succ = [ 9. fcmplte])
+     1. fload  i/dk         ->   r1          (pred = [], succ = [])
+     2. fload  i/pk         ->   r2          (pred = [], succ = [ 9. fcmplte])
+     3. fload  i/ck         ->   r3          (pred = [], succ = [])
+     4. fmov    c.1,   r8                    (pred = [], succ = [])
+     5. fmov    c.2,   r9                    (pred = [], succ = [])
+     6. fmov    c.4,  r10                    (pred = [], succ = [])
+     7. fmov    c.5,  r11                    (pred = [], succ = [])
+     8. fmov    c.6,  r12                    (pred = [], succ = [])
+     9. fcmplte   r0,   r2   ->   p0          (pred = [ 0. fload ,  2. fload ], succ = [10. jump  , 24. jump  ])
+    10. jump                        ?   p0   (pred = [ 9. fcmplte], succ = [])
+    24. jump                        ?  !p0   (pred = [ 9. fcmplte], succ = [])
+Edges: [10. 0 -> 1, cnt = 44, prob = 0.44], [24. 0 -> 2, cnt = 56, prob = 0.56]
+
+STOP CFG Node 1 (cnt = 44):
+    11. fdiv     r0,   r2   ->  r13          (pred = [], succ = [12. fmov  ])
+    12. fmov    r13,   r6                    (pred = [11. fdiv  ], succ = [])
+    13. fmul    r10,   r3   ->  r14          (pred = [], succ = [16. fmul  ])
+    14. fpow     r6,   r8   ->  r15          (pred = [], succ = [15. fsub  ])
+    15. fsub    r15, c.1.0  ->  r16          (pred = [14. fpow  ], succ = [16. fmul  ])
+    16. fmul    r14,  r16   ->  r17          (pred = [13. fmul  , 15. fsub  ], succ = [17. fstore])
+    17. fstore  r17,  o/f                    (pred = [16. fmul  ], succ = [])
+    18. fmul     r1,   r3   ->  r18          (pred = [], succ = [19. fdiv  ])
+    19. fdiv   c.1.0,  r18  ->  r19          (pred = [18. fmul  ], succ = [22. fmul  ])
+    20. unary_minus   r9         ->  r20          (pred = [], succ = [21. fpow  ])
+    21. fpow     r6,  r20   ->  r21          (pred = [20. unary_minus], succ = [22. fmul  ])
+    22. fmul    r19,  r21   ->  r22          (pred = [19. fdiv  , 21. fpow  ], succ = [23. fstore])
+    23. fstore  r22, o/fd                    (pred = [22. fmul  ], succ = [])
+Edges: 
+
+STOP CFG Node 2 (cnt = 56):
+    25. fdiv    r11,   r1   ->  r23          (pred = [], succ = [26. fmov  ])
+    26. fmov    r23,   r4                    (pred = [25. fdiv  ], succ = [])
+    27. fmul    r12,   r2   ->  r24          (pred = [], succ = [28. fmov  ])
+    28. fmov    r24,   r5                    (pred = [27. fmul  ], succ = [])
+    29. fadd     r5,   r0   ->  r25          (pred = [], succ = [30. fdiv  ])
+    30. fdiv     r4,  r25   ->  r26          (pred = [29. fadd  ], succ = [31. fsqrt ])
+    31. fsqrt   r26         ->  r27          (pred = [30. fdiv  ], succ = [32. fmov  ])
+    32. fmov    r27,   r7                    (pred = [31. fsqrt ], succ = [])
+    33. fsub     r0,   r2   ->  r28          (pred = [], succ = [34. fmul  ])
+    34. fmul    r28,   r7   ->  r29          (pred = [33. fsub  ], succ = [35. fstore])
+    35. fstore  r29,  o/f                    (pred = [34. fmul  ], succ = [])
+    36. fsub     r0,   r2   ->  r30          (pred = [], succ = [37. fmul  ])
+    37. fmul   c.0.5,  r30  ->  r31          (pred = [36. fsub  ], succ = [39. fdiv  ])
+    38. fadd     r5,   r0   ->  r32          (pred = [], succ = [39. fdiv  ])
+    39. fdiv    r31,  r32   ->  r33          (pred = [37. fmul  , 38. fadd  ], succ = [40. fsub  ])
+    40. fsub   c.1.0,  r33  ->  r34          (pred = [39. fdiv  ], succ = [41. fmul  ])
+    41. fmul    r34,   r7   ->  r35          (pred = [40. fsub  ], succ = [42. fstore])
+    42. fstore  r35, o/fd                    (pred = [41. fmul  ], succ = [])
+Edges: 
+
+
+=================================
+Results compare:
+	f: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	fd: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Speedup:
+	oc = 2736
+	orig_oc = 2736
+	speedup = 1.0

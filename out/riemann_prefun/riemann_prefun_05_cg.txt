@@ -1,0 +1,44 @@
+{
+	r0 = _mm512_load_ps(&p[i]);
+	r1 = _mm512_load_ps(&dk[i]);
+	r2 = _mm512_load_ps(&pk[i]);
+	r3 = _mm512_load_ps(&ck[i]);
+	r8 = _mm512_set1_ps(1);
+	r9 = _mm512_set1_ps(2);
+	r10 = _mm512_set1_ps(4);
+	r11 = _mm512_set1_ps(5);
+	r12 = _mm512_set1_ps(6);
+	p0 = _mm512_cmplte_ps_mask(r0, r2)
+	r13 = _mm512_mask_div_ps(r13, p0, r0, r2);
+
+	r14 = _mm512_mask_mul_ps(r14, p0, r10, r3);
+	r15 = _mm512_mask_pow_ps(r15, p0, r6, r8);
+	r16 = _mm512_mask_sub_ps(r16, p0, r15, c.1.0);
+	r17 = _mm512_mask_mul_ps(r17, p0, r14, r16);
+	_mm512_mask_store_ps(&f[i], p0, r17);
+	r18 = _mm512_mask_mul_ps(r18, p0, r1, r3);
+	r19 = _mm512_mask_div_ps(r19, p0, c.1.0, r18);
+
+	r21 = _mm512_mask_pow_ps(r21, p0, r6, r20);
+	r22 = _mm512_mask_mul_ps(r22, p0, r19, r21);
+	_mm512_mask_store_ps(&fd[i], p0, r22);
+	p2 = ~p0;
+	r23 = _mm512_mask_div_ps(r23, p2, r11, r1);
+
+	r24 = _mm512_mask_mul_ps(r24, p2, r12, r2);
+
+	r25 = _mm512_mask_add_ps(r25, p2, r5, r0);
+	r26 = _mm512_mask_div_ps(r26, p2, r4, r25);
+	r27 = _mm512_mask_sqrt_ps(r27, p2, r26);
+
+	r28 = _mm512_mask_sub_ps(r28, p2, r0, r2);
+	r29 = _mm512_mask_mul_ps(r29, p2, r28, r7);
+	_mm512_mask_store_ps(&f[i], p2, r29);
+	r30 = _mm512_mask_sub_ps(r30, p2, r0, r2);
+	r31 = _mm512_mask_mul_ps(r31, p2, c.0.5, r30);
+	r32 = _mm512_mask_add_ps(r32, p2, r5, r0);
+	r33 = _mm512_mask_div_ps(r33, p2, r31, r32);
+	r34 = _mm512_mask_sub_ps(r34, p2, c.1.0, r33);
+	r35 = _mm512_mask_mul_ps(r35, p2, r34, r7);
+	_mm512_mask_store_ps(&fd[i], p2, r35);
+}

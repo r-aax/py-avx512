@@ -2,4 +2,3 @@ pyavx512/cfg/__pycache__/*
 pyavx512/sem/__pycache__/*
 pyavx512/tools/__pycache__/*
 pyavx512/__pycache__/*
-out/*

@@ -1,0 +1,29 @@
+	in_params = [i/a, i/b]
+	out_params = [o/c]
+
+START CFG Node 0 (cnt = 100):
+     0. fload   i/a         ->   r0          (pred = [], succ = [ 2. fcmpge])
+     1. fload   i/b         ->   r1          (pred = [], succ = [ 2. fcmpge])
+     2. fcmpge   r0,   r1   ->   p0          (pred = [ 0. fload ,  1. fload ], succ = [ 3. jump  ,  6. jump  ])
+     3. jump                        ?   p0   (pred = [ 2. fcmpge], succ = [])
+     6. jump                        ?  !p0   (pred = [ 2. fcmpge], succ = [])
+Edges: [3. 0 -> 1, cnt = 51, prob = 0.51], [6. 0 -> 2, cnt = 49, prob = 0.49]
+
+STOP CFG Node 1 (cnt = 51):
+     4. fadd     r0,   r1   ->   r2          (pred = [], succ = [ 5. fstore])
+     5. fstore   r2,  o/c                    (pred = [ 4. fadd  ], succ = [])
+Edges: 
+
+STOP CFG Node 2 (cnt = 49):
+     7. fsub     r0,   r1   ->   r3          (pred = [], succ = [ 8. fstore])
+     8. fstore   r3,  o/c                    (pred = [ 7. fsub  ], succ = [])
+Edges: 
+
+
+=================================
+Results compare:
+	c: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Speedup:
+	oc = 649
+	orig_oc = 649
+	speedup = 1.0

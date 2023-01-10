@@ -1,0 +1,164 @@
+	in_params = [i/dl, i/ul, i/pl, i/cl, i/dr, i/ur, i/pr, i/cr]
+	out_params = [o/pm]
+
+START CFG Node 0 (cnt = 100):
+     0. fload  i/dl         ->   r0          (pred = [], succ = [16. fadd  ])
+     1. fload  i/ul         ->   r1          (pred = [], succ = [23. fsub  ])
+     2. fload  i/pl         ->   r2          (pred = [], succ = [21. fadd  , 33. fcmplt, 42. fcmpge])
+     3. fload  i/cl         ->   r3          (pred = [], succ = [18. fadd  ])
+     4. fload  i/dr         ->   r4          (pred = [], succ = [16. fadd  ])
+     5. fload  i/ur         ->   r5          (pred = [], succ = [23. fsub  ])
+     6. fload  i/pr         ->   r6          (pred = [], succ = [21. fadd  , 33. fcmplt, 42. fcmpge])
+     7. fload  i/cr         ->   r7          (pred = [], succ = [18. fadd  ])
+     8. fmov    c.1,  r20                    (pred = [], succ = [])
+     9. fmov    c.2,  r21                    (pred = [], succ = [])
+    10. fmov    c.3,  r22                    (pred = [], succ = [])
+    11. fmov    c.4,  r23                    (pred = [], succ = [])
+    12. fmov    c.5,  r24                    (pred = [], succ = [])
+    13. fmov    c.6,  r25                    (pred = [], succ = [])
+    14. fmov    c.7,  r26                    (pred = [], succ = [])
+    15. fmov   c.2.0,  r18                   (pred = [], succ = [])
+    16. fadd     r0,   r4   ->  r27          (pred = [ 0. fload ,  4. fload ], succ = [17. fmul  ])
+    17. fmul   c.0.25,  r27 ->  r28          (pred = [16. fadd  ], succ = [19. fmul  ])
+    18. fadd     r3,   r7   ->  r29          (pred = [ 3. fload ,  7. fload ], succ = [19. fmul  ])
+    19. fmul    r28,  r29   ->  r30          (pred = [17. fmul  , 18. fadd  ], succ = [20. fmov  ])
+    20. fmov    r30,   r8                    (pred = [19. fmul  ], succ = [])
+    21. fadd     r2,   r6   ->  r31          (pred = [ 2. fload ,  6. fload ], succ = [22. fmul  ])
+    22. fmul   c.0.5,  r31  ->  r32          (pred = [21. fadd  ], succ = [26. fadd  ])
+    23. fsub     r1,   r5   ->  r33          (pred = [ 1. fload ,  5. fload ], succ = [24. fmul  ])
+    24. fmul   c.0.5,  r33  ->  r34          (pred = [23. fsub  ], succ = [25. fmul  ])
+    25. fmul    r34,   r8   ->  r35          (pred = [24. fmul  ], succ = [26. fadd  ])
+    26. fadd    r32,  r35   ->  r36          (pred = [22. fmul  , 25. fmul  ], succ = [27. fmov  ])
+    27. fmov    r36,  r13                    (pred = [26. fadd  ], succ = [])
+    28. fcmpge  r13, c.0.0  ->   p0          (pred = [], succ = [29. jump  , 31. jump  ])
+    29. jump                        ?   p0   (pred = [28. fcmpge], succ = [])
+    31. jump                        ?  !p0   (pred = [28. fcmpge], succ = [])
+    33. fcmplt   r2,   r6   ->   p1          (pred = [ 2. fload ,  6. fload ], succ = [34. jump  , 36. jump  ])
+    34. jump                        ?   p1   (pred = [33. fcmplt], succ = [])
+    36. jump                        ?  !p1   (pred = [33. fcmplt], succ = [])
+    42. fcmpge   r2,   r6   ->   p4          (pred = [ 2. fload ,  6. fload ], succ = [43. jump  , 45. jump  ])
+    43. jump                        ?   p4   (pred = [42. fcmpge], succ = [])
+    45. jump                        ?  !p4   (pred = [42. fcmpge], succ = [])
+    51. fdiv    r11,  r12   ->  r37          (pred = [], succ = [52. fmov  ])
+    52. fmov    r37,  r17                    (pred = [51. fdiv  ], succ = [])
+    53. fcmplte  r17,  r18   ->   p7          (pred = [], succ = [55. pand  ])
+    54. fcmplte  r12,  r13   ->   p8          (pred = [], succ = [55. pand  ])
+    55. pand     p7,   p8   ->   p9          (pred = [53. fcmplte, 54. fcmplte], succ = [57. pand  ])
+    56. fcmplte  r13,  r11   ->  p10          (pred = [], succ = [57. pand  ])
+    57. pand     p9,  p10   ->  p11          (pred = [55. pand  , 56. fcmplte], succ = [58. jump  , 60. jump  ])
+    58. jump                        ?  p11   (pred = [57. pand  ], succ = [])
+    60. jump                        ? !p11   (pred = [57. pand  ], succ = [])
+Edges: [29. 0 -> 1, cnt = 100, prob = 1.0], [31. 0 -> 2, cnt = 0, prob = 0.0], [34. 0 -> 3, cnt = 0, prob = 0.0], [36. 0 -> 4, cnt = 0, prob = 0.0], [43. 0 -> 5, cnt = 0, prob = 0.0], [45. 0 -> 6, cnt = 0, prob = 0.0], [58. 0 -> 7, cnt = 0, prob = 0.0], [60. 0 -> 8, cnt = 0, prob = 0.0]
+
+CFG Node 1 (cnt = 100):
+    30. fmov    r13,  r13                    (pred = [], succ = [])
+    38. fcmpge  c.1,  c.0   ->   p2          (pred = [], succ = [39. jump  ])
+    39. jump                        ?   p2   (pred = [38. fcmpge], succ = [])
+Edges: [39. 1 -> 3, cnt = 100, prob = 1.0]
+
+CFG Node 2 (cnt = 0):
+    32. fmov   c.0.0,  r13                   (pred = [], succ = [])
+    40. fcmpge  c.1,  c.0   ->   p3          (pred = [], succ = [41. jump  ])
+    41. jump                        ?   p3   (pred = [40. fcmpge], succ = [])
+Edges: [41. 2 -> 3, cnt = 0, prob = nan]
+
+CFG Node 3 (cnt = 100):
+    35. fmov     r2,  r12                    (pred = [], succ = [])
+    47. fcmpge  c.1,  c.0   ->   p5          (pred = [], succ = [48. jump  ])
+    48. jump                        ?   p5   (pred = [47. fcmpge], succ = [])
+Edges: [48. 3 -> 5, cnt = 100, prob = 1.0]
+
+CFG Node 4 (cnt = 0):
+    37. fmov     r6,  r12                    (pred = [], succ = [])
+    49. fcmpge  c.1,  c.0   ->   p6          (pred = [], succ = [50. jump  ])
+    50. jump                        ?   p6   (pred = [49. fcmpge], succ = [])
+Edges: [50. 4 -> 5, cnt = 0, prob = nan]
+
+CFG Node 5 (cnt = 100):
+    44. fmov     r2,  r11                    (pred = [], succ = [])
+    116. fcmpge  c.1,  c.0   ->  p13          (pred = [], succ = [117. jump  ])
+    117. jump                        ?  p13   (pred = [116. fcmpge], succ = [])
+Edges: [117. 5 -> 7, cnt = 100, prob = 1.0]
+
+CFG Node 6 (cnt = 0):
+    46. fmov     r6,  r11                    (pred = [], succ = [])
+    118. fcmpge  c.1,  c.0   ->  p14          (pred = [], succ = [119. jump  ])
+    119. jump                        ?  p14   (pred = [118. fcmpge], succ = [])
+Edges: [119. 6 -> 7, cnt = 0, prob = nan]
+
+STOP CFG Node 7 (cnt = 100):
+    59. fstore  r13, o/pm                    (pred = [], succ = [])
+Edges: 
+
+CFG Node 8 (cnt = 0):
+    61. fcmplt  r13,  r12   ->  p12          (pred = [], succ = [62. jump  , 95. jump  ])
+    62. jump                        ?  p12   (pred = [61. fcmplt], succ = [])
+    95. jump                        ? !p12   (pred = [61. fcmplt], succ = [])
+Edges: [62. 8 -> 9, cnt = 0, prob = nan], [95. 8 -> 10, cnt = 0, prob = nan]
+
+STOP CFG Node 9 (cnt = 0):
+    63. fdiv     r2,   r6   ->  r38          (pred = [], succ = [64. fpow  ])
+    64. fpow    r38,  r20   ->  r39          (pred = [63. fdiv  ], succ = [65. fmov  ])
+    65. fmov    r39,  r14                    (pred = [64. fpow  ], succ = [])
+    66. fmul    r14,   r1   ->  r40          (pred = [], succ = [67. fdiv  ])
+    67. fdiv    r40,   r3   ->  r41          (pred = [66. fmul  ], succ = [69. fadd  ])
+    68. fdiv     r5,   r7   ->  r42          (pred = [], succ = [69. fadd  ])
+    69. fadd    r41,  r42   ->  r43          (pred = [67. fdiv  , 68. fdiv  ], succ = [72. fadd  ])
+    70. fsub    r14, c.1.0  ->  r44          (pred = [], succ = [71. fmul  ])
+    71. fmul    r23,  r44   ->  r45          (pred = [70. fsub  ], succ = [72. fadd  ])
+    72. fadd    r43,  r45   ->  r46          (pred = [69. fadd  , 71. fmul  ], succ = [76. fdiv  ])
+    73. fdiv    r14,   r3   ->  r47          (pred = [], succ = [75. fadd  ])
+    74. fdiv   c.1.0,   r7  ->  r48          (pred = [], succ = [75. fadd  ])
+    75. fadd    r47,  r48   ->  r49          (pred = [73. fdiv  , 74. fdiv  ], succ = [76. fdiv  ])
+    76. fdiv    r46,  r49   ->  r50          (pred = [72. fadd  , 75. fadd  ], succ = [77. fmov  ])
+    77. fmov    r50,  r19                    (pred = [76. fdiv  ], succ = [])
+    78. fsub     r1,  r19   ->  r51          (pred = [], succ = [79. fmul  ])
+    79. fmul    r26,  r51   ->  r52          (pred = [78. fsub  ], succ = [80. fdiv  ])
+    80. fdiv    r52,   r3   ->  r53          (pred = [79. fmul  ], succ = [81. fadd  ])
+    81. fadd   c.1.0,  r53  ->  r54          (pred = [80. fdiv  ], succ = [82. fmov  ])
+    82. fmov    r54,  r15                    (pred = [81. fadd  ], succ = [])
+    83. fsub    r19,   r5   ->  r55          (pred = [], succ = [84. fmul  ])
+    84. fmul    r26,  r55   ->  r56          (pred = [83. fsub  ], succ = [85. fdiv  ])
+    85. fdiv    r56,   r7   ->  r57          (pred = [84. fmul  ], succ = [86. fadd  ])
+    86. fadd   c.1.0,  r57  ->  r58          (pred = [85. fdiv  ], succ = [87. fmov  ])
+    87. fmov    r58,  r16                    (pred = [86. fadd  ], succ = [])
+    88. fmul     r2,  r15   ->  r59          (pred = [], succ = [89. fpow  ])
+    89. fpow    r59,  r22   ->  r60          (pred = [88. fmul  ], succ = [92. fadd  ])
+    90. fmul     r6,  r16   ->  r61          (pred = [], succ = [91. fpow  ])
+    91. fpow    r61,  r22   ->  r62          (pred = [90. fmul  ], succ = [92. fadd  ])
+    92. fadd    r60,  r62   ->  r63          (pred = [89. fpow  , 91. fpow  ], succ = [93. fmul  ])
+    93. fmul   c.0.5,  r63  ->  r64          (pred = [92. fadd  ], succ = [94. fstore])
+    94. fstore  r64, o/pm                    (pred = [93. fmul  ], succ = [])
+Edges: 
+
+STOP CFG Node 10 (cnt = 0):
+    96. fdiv    r24,   r0   ->  r65          (pred = [], succ = [99. fdiv  ])
+    97. fmul    r25,   r2   ->  r66          (pred = [], succ = [98. fadd  ])
+    98. fadd    r66,  r13   ->  r67          (pred = [97. fmul  ], succ = [99. fdiv  ])
+    99. fdiv    r65,  r67   ->  r68          (pred = [96. fdiv  , 98. fadd  ], succ = [100. fsqrt ])
+    100. fsqrt   r68         ->  r69          (pred = [99. fdiv  ], succ = [101. fmov  ])
+    101. fmov    r69,   r9                    (pred = [100. fsqrt ], succ = [])
+    102. fdiv    r24,   r4   ->  r70          (pred = [], succ = [105. fdiv  ])
+    103. fmul    r25,   r6   ->  r71          (pred = [], succ = [104. fadd  ])
+    104. fadd    r71,  r13   ->  r72          (pred = [103. fmul  ], succ = [105. fdiv  ])
+    105. fdiv    r70,  r72   ->  r73          (pred = [102. fdiv  , 104. fadd  ], succ = [106. fsqrt ])
+    106. fsqrt   r73         ->  r74          (pred = [105. fdiv  ], succ = [107. fmov  ])
+    107. fmov    r74,  r10                    (pred = [106. fsqrt ], succ = [])
+    108. fmul     r9,   r2   ->  r75          (pred = [], succ = [110. fadd  ])
+    109. fmul    r10,   r6   ->  r76          (pred = [], succ = [110. fadd  ])
+    110. fadd    r75,  r76   ->  r77          (pred = [108. fmul  , 109. fmul  ], succ = [112. fsub  ])
+    111. fsub     r5,   r1   ->  r78          (pred = [], succ = [112. fsub  ])
+    112. fsub    r77,  r78   ->  r79          (pred = [110. fadd  , 111. fsub  ], succ = [114. fdiv  ])
+    113. fadd     r9,  r10   ->  r80          (pred = [], succ = [114. fdiv  ])
+    114. fdiv    r79,  r80   ->  r81          (pred = [112. fsub  , 113. fadd  ], succ = [115. fstore])
+    115. fstore  r81, o/pm                    (pred = [114. fdiv  ], succ = [])
+Edges: 
+
+
+=================================
+Results compare:
+	pm: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Speedup:
+	oc = 4000
+	orig_oc = 4000
+	speedup = 1.0
