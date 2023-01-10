@@ -40,6 +40,10 @@
 
 	p2 = _mm512_mask_cmpge_ps_mask(p2, p0, c.1, c.0)
 	p16 = p0 & p2;
+	p17 = ~p0;
+
+	p3 = _mm512_mask_cmpge_ps_mask(p3, p17, c.1, c.0)
+	p18 = p17 & p3;
 	p31 = p18 & p16;
 	p28 = p18 & p16;
 	p25 = p16 & p1;

@@ -1,27 +1,27 @@
 	in_params = [i/a, i/b]
 	out_params = [o/c]
 
-START CFG Node 0 (cnt = 100):
+START CFG Node 0 (cnt = 10000):
      0. fload   i/a         ->   r0          (pred = [], succ = [ 2. fcmpge])
      1. fload   i/b         ->   r1          (pred = [], succ = [ 2. fcmpge])
      2. fcmpge   r0,   r1   ->   p0          (pred = [ 0. fload ,  1. fload ], succ = [ 3. jump  ,  8. jump  ])
      3. jump                        ?   p0   (pred = [ 2. fcmpge], succ = [])
      8. jump                        ?  !p0   (pred = [ 2. fcmpge], succ = [])
-Edges: [3. 0 -> 1, cnt = 48, prob = 0.48], [8. 0 -> 2, cnt = 52, prob = 0.52]
+Edges: [3. 0 -> 1, cnt = 5013, prob = 0.5], [8. 0 -> 2, cnt = 4987, prob = 0.5]
 
-STOP CFG Node 1 (cnt = 48):
+STOP CFG Node 1 (cnt = 5013):
      4. fadd     r0,   r1   ->   r2          (pred = [], succ = [ 5. fadd  ])
      5. fadd     r2, c.0.5  ->   r3          (pred = [ 4. fadd  ], succ = [ 6. fstore])
      6. fstore   r3,  o/c                    (pred = [ 5. fadd  ], succ = [])
 Edges: 
 
-CFG Node 2 (cnt = 52):
+CFG Node 2 (cnt = 4987):
      7. fcmplt   r0,   r1   ->   p1          (pred = [], succ = [ 9. jump  , 13. jump  ])
      9. jump                        ?   p1   (pred = [ 7. fcmplt], succ = [])
     13. jump                        ?  !p1   (pred = [ 7. fcmplt], succ = [])
-Edges: [9. 2 -> 3, cnt = 52, prob = 1.0], [13. 2 -> 4, cnt = 0, prob = 0.0]
+Edges: [9. 2 -> 3, cnt = 4987, prob = 1.0], [13. 2 -> 4, cnt = 0, prob = 0.0]
 
-STOP CFG Node 3 (cnt = 52):
+STOP CFG Node 3 (cnt = 4987):
     10. fsub     r0,   r1   ->   r4          (pred = [], succ = [11. fsub  ])
     11. fsub     r4, c.0.5  ->   r5          (pred = [10. fsub  ], succ = [12. fstore])
     12. fstore   r5,  o/c                    (pred = [11. fsub  ], succ = [])
@@ -34,9 +34,7 @@ Edges:
 
 
 =================================
-Results compare:
-	c: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 Speedup:
-	oc = 856
-	orig_oc = 856
+	oc = 84961
+	orig_oc = 84961
 	speedup = 1.0

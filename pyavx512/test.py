@@ -70,9 +70,10 @@ def write_input_and_res_data(f, input_data, res, res_orig, oc, oc_orig, detail_p
         else:
             return x - y
 
-    f.write(f'Results compare:\n')
-    for x in res:
-        f.write(f'\t{x}: diff = {[xdiff(k, z) for k, z in zip(np.array(res[x]), np.array(res_orig[x]))]}\n')
+    if detail_print:
+        f.write(f'Results compare:\n')
+        for x in res:
+            f.write(f'\t{x}: diff = {[xdiff(k, z) for k, z in zip(np.array(res[x]), np.array(res_orig[x]))]}\n')
     f.write('Speedup:\n')
     f.write(f'\toc = {oc}\n\torig_oc = {oc_orig}\n\tspeedup = {oc_orig / oc}\n')
 
@@ -134,7 +135,7 @@ def dump_cases(cases=None,
         # Generate input data.
         input_data = {}
         for in_param in ir.InParams:
-            input_data[in_param.Id] = np.random.uniform(1.0, 2.0, 100)
+            input_data[in_param.Id] = np.random.uniform(1.0, 2.0, 10000)
         # Emulate right results.
         res_orig, oc_orig = emulator.run(ir, input_data)
         with open(f'{dst_dir}/{case}_01_parse.txt', 'w') as f:

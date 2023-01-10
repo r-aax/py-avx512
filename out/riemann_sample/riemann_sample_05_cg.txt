@@ -78,6 +78,9 @@
 	p4 = _mm512_mask_cmplte_ps_mask(p4, p11, c.0.0, r21)
 	p23 = p11 & ~p4;
 	p22 = p11 & p4;
+	_mm512_mask_store_ps(&d[i], p22, r0);
+	_mm512_mask_store_ps(&u[i], p22, r1);
+	_mm512_mask_store_ps(&p[i], p22, r4);
 	r60 = _mm512_mask_add_ps(r60, p23, r17, r30);
 	r61 = _mm512_mask_mul_ps(r61, p23, r0, r60);
 	r62 = _mm512_mask_mul_ps(r62, p23, r17, r30);

@@ -1,7 +1,7 @@
 	in_params = [i/dl, i/ul, i/pl, i/cl, i/dr, i/ur, i/pr, i/cr]
 	out_params = [o/pm]
 
-START STOP CFG Node 0 (cnt = 100):
+START STOP CFG Node 0 (cnt = 10000):
      0. fload  i/dl         ->   r0          (pred = [], succ = [16. fadd  ])
      1. fload  i/ul         ->   r1          (pred = [], succ = [23. fsub  ])
      2. fload  i/pl         ->   r2          (pred = [], succ = [21. fadd  , 33. fcmplt, 42. fcmpge])
@@ -44,6 +44,10 @@ START STOP CFG Node 0 (cnt = 100):
     30. fmov    r13,  r13           ?  p15   (pred = [], succ = [])
     38. fcmpge  c.1,  c.0   ->   p2 ?  p15   (pred = [], succ = [39. jump  ])
     121. pand    p15,   p2   ->  p16          (pred = [], succ = [])
+    122. pnot     p0         ->  p17          (pred = [], succ = [])
+    32. fmov   c.0.0,  r13          ?  p17   (pred = [], succ = [])
+    40. fcmpge  c.1,  c.0   ->   p3 ?  p17   (pred = [], succ = [41. jump  ])
+    123. pand    p17,   p3   ->  p18          (pred = [], succ = [])
     132. pmov    p18         ->  p27          (pred = [], succ = [])
     128. pmov    p16         ->  p23 ?  p27   (pred = [], succ = [])
     136. pand    p27,  p23   ->  p31          (pred = [], succ = [])
@@ -83,9 +87,7 @@ Edges:
 
 
 =================================
-Results compare:
-	pm: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 Speedup:
-	oc = 7700
-	orig_oc = 4000
-	speedup = 0.5194805194805194
+	oc = 810000
+	orig_oc = 400007
+	speedup = 0.4938358024691358

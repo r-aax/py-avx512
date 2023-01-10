@@ -1,7 +1,7 @@
 	in_params = [i/xl, i/xr, i/yl, i/yr, i/zl, i/zr, i/sph_x, i/sph_y, i/sph_z, i/sph_r]
 	out_params = [o/kind]
 
-START CFG Node 0 (cnt = 100):
+START CFG Node 0 (cnt = 10000):
      0. fload  i/xl         ->   r0          (pred = [], succ = [10. fsub  , 11. fsub  , 128. fadd  ])
      1. fload  i/xr         ->   r1          (pred = [], succ = [14. fsub  , 15. fsub  , 128. fadd  ])
      2. fload  i/yl         ->   r2          (pred = [], succ = [18. fsub  , 19. fsub  , 131. fadd  ])
@@ -98,25 +98,25 @@ START CFG Node 0 (cnt = 100):
     137. fcmpeq  r60, c.0.0  ->  p22          (pred = [], succ = [138. jump  , 141. jump  ])
     138. jump                        ?  p22   (pred = [137. fcmpeq], succ = [])
     141. jump                        ? !p22   (pred = [137. fcmpeq], succ = [])
-Edges: [39. 0 -> 1, cnt = 98, prob = 0.98], [41. 0 -> 2, cnt = 2, prob = 0.02], [46. 0 -> 3, cnt = 0, prob = 0.0], [48. 0 -> 4, cnt = 0, prob = 0.0], [57. 0 -> 5, cnt = 0, prob = 0.0], [59. 0 -> 6, cnt = 0, prob = 0.0], [68. 0 -> 7, cnt = 0, prob = 0.0], [70. 0 -> 8, cnt = 0, prob = 0.0], [79. 0 -> 9, cnt = 0, prob = 0.0], [81. 0 -> 10, cnt = 0, prob = 0.0], [90. 0 -> 11, cnt = 0, prob = 0.0], [92. 0 -> 12, cnt = 0, prob = 0.0], [101. 0 -> 13, cnt = 0, prob = 0.0], [103. 0 -> 14, cnt = 0, prob = 0.0], [112. 0 -> 15, cnt = 0, prob = 0.0], [114. 0 -> 16, cnt = 0, prob = 0.0], [138. 0 -> 17, cnt = 0, prob = 0.0], [141. 0 -> 18, cnt = 0, prob = 0.0]
+Edges: [39. 0 -> 1, cnt = 9924, prob = 0.99], [41. 0 -> 2, cnt = 76, prob = 0.01], [46. 0 -> 3, cnt = 0, prob = 0.0], [48. 0 -> 4, cnt = 0, prob = 0.0], [57. 0 -> 5, cnt = 0, prob = 0.0], [59. 0 -> 6, cnt = 0, prob = 0.0], [68. 0 -> 7, cnt = 0, prob = 0.0], [70. 0 -> 8, cnt = 0, prob = 0.0], [79. 0 -> 9, cnt = 0, prob = 0.0], [81. 0 -> 10, cnt = 0, prob = 0.0], [90. 0 -> 11, cnt = 0, prob = 0.0], [92. 0 -> 12, cnt = 0, prob = 0.0], [101. 0 -> 13, cnt = 0, prob = 0.0], [103. 0 -> 14, cnt = 0, prob = 0.0], [112. 0 -> 15, cnt = 0, prob = 0.0], [114. 0 -> 16, cnt = 0, prob = 0.0], [138. 0 -> 17, cnt = 0, prob = 0.0], [141. 0 -> 18, cnt = 0, prob = 0.0]
 
-CFG Node 1 (cnt = 98):
+CFG Node 1 (cnt = 9924):
     40. fmov   c.1.0,  r36                   (pred = [], succ = [])
     50. fcmpge  c.1,  c.0   ->   p2          (pred = [], succ = [51. jump  ])
     51. jump                        ?   p2   (pred = [50. fcmpge], succ = [])
-Edges: [51. 1 -> 3, cnt = 98, prob = 1.0]
+Edges: [51. 1 -> 3, cnt = 9924, prob = 1.0]
 
-CFG Node 2 (cnt = 2):
+CFG Node 2 (cnt = 76):
     42. fmov   c.0.0,  r36                   (pred = [], succ = [])
     52. fcmpge  c.1,  c.0   ->   p3          (pred = [], succ = [53. jump  ])
     53. jump                        ?   p3   (pred = [52. fcmpge], succ = [])
-Edges: [53. 2 -> 3, cnt = 2, prob = 1.0]
+Edges: [53. 2 -> 3, cnt = 76, prob = 1.0]
 
-CFG Node 3 (cnt = 100):
+CFG Node 3 (cnt = 10000):
     47. fmov   c.1.0,  r39                   (pred = [], succ = [])
     61. fcmpge  c.1,  c.0   ->   p5          (pred = [], succ = [62. jump  ])
     62. jump                        ?   p5   (pred = [61. fcmpge], succ = [])
-Edges: [62. 3 -> 5, cnt = 100, prob = 1.0]
+Edges: [62. 3 -> 5, cnt = 10000, prob = 1.0]
 
 CFG Node 4 (cnt = 0):
     49. fmov   c.0.0,  r39                   (pred = [], succ = [])
@@ -124,11 +124,11 @@ CFG Node 4 (cnt = 0):
     64. jump                        ?   p6   (pred = [63. fcmpge], succ = [])
 Edges: [64. 4 -> 5, cnt = 0, prob = nan]
 
-CFG Node 5 (cnt = 100):
+CFG Node 5 (cnt = 10000):
     58. fmov   c.1.0,  r42                   (pred = [], succ = [])
     72. fcmpge  c.1,  c.0   ->   p8          (pred = [], succ = [73. jump  ])
     73. jump                        ?   p8   (pred = [72. fcmpge], succ = [])
-Edges: [73. 5 -> 7, cnt = 100, prob = 1.0]
+Edges: [73. 5 -> 7, cnt = 10000, prob = 1.0]
 
 CFG Node 6 (cnt = 0):
     60. fmov   c.0.0,  r42                   (pred = [], succ = [])
@@ -136,11 +136,11 @@ CFG Node 6 (cnt = 0):
     75. jump                        ?   p9   (pred = [74. fcmpge], succ = [])
 Edges: [75. 6 -> 7, cnt = 0, prob = nan]
 
-CFG Node 7 (cnt = 100):
+CFG Node 7 (cnt = 10000):
     69. fmov   c.1.0,  r45                   (pred = [], succ = [])
     83. fcmpge  c.1,  c.0   ->  p11          (pred = [], succ = [84. jump  ])
     84. jump                        ?  p11   (pred = [83. fcmpge], succ = [])
-Edges: [84. 7 -> 9, cnt = 100, prob = 1.0]
+Edges: [84. 7 -> 9, cnt = 10000, prob = 1.0]
 
 CFG Node 8 (cnt = 0):
     71. fmov   c.0.0,  r45                   (pred = [], succ = [])
@@ -148,11 +148,11 @@ CFG Node 8 (cnt = 0):
     86. jump                        ?  p12   (pred = [85. fcmpge], succ = [])
 Edges: [86. 8 -> 9, cnt = 0, prob = nan]
 
-CFG Node 9 (cnt = 100):
+CFG Node 9 (cnt = 10000):
     80. fmov   c.1.0,  r48                   (pred = [], succ = [])
     94. fcmpge  c.1,  c.0   ->  p14          (pred = [], succ = [95. jump  ])
     95. jump                        ?  p14   (pred = [94. fcmpge], succ = [])
-Edges: [95. 9 -> 11, cnt = 100, prob = 1.0]
+Edges: [95. 9 -> 11, cnt = 10000, prob = 1.0]
 
 CFG Node 10 (cnt = 0):
     82. fmov   c.0.0,  r48                   (pred = [], succ = [])
@@ -160,11 +160,11 @@ CFG Node 10 (cnt = 0):
     97. jump                        ?  p15   (pred = [96. fcmpge], succ = [])
 Edges: [97. 10 -> 11, cnt = 0, prob = nan]
 
-CFG Node 11 (cnt = 100):
+CFG Node 11 (cnt = 10000):
     91. fmov   c.1.0,  r51                   (pred = [], succ = [])
     105. fcmpge  c.1,  c.0   ->  p17          (pred = [], succ = [106. jump  ])
     106. jump                        ?  p17   (pred = [105. fcmpge], succ = [])
-Edges: [106. 11 -> 13, cnt = 100, prob = 1.0]
+Edges: [106. 11 -> 13, cnt = 10000, prob = 1.0]
 
 CFG Node 12 (cnt = 0):
     93. fmov   c.0.0,  r51                   (pred = [], succ = [])
@@ -172,11 +172,11 @@ CFG Node 12 (cnt = 0):
     108. jump                        ?  p18   (pred = [107. fcmpge], succ = [])
 Edges: [108. 12 -> 13, cnt = 0, prob = nan]
 
-CFG Node 13 (cnt = 100):
+CFG Node 13 (cnt = 10000):
     102. fmov   c.1.0,  r54                   (pred = [], succ = [])
     116. fcmpge  c.1,  c.0   ->  p20          (pred = [], succ = [117. jump  ])
     117. jump                        ?  p20   (pred = [116. fcmpge], succ = [])
-Edges: [117. 13 -> 15, cnt = 100, prob = 1.0]
+Edges: [117. 13 -> 15, cnt = 10000, prob = 1.0]
 
 CFG Node 14 (cnt = 0):
     104. fmov   c.0.0,  r54                   (pred = [], succ = [])
@@ -184,11 +184,11 @@ CFG Node 14 (cnt = 0):
     119. jump                        ?  p21   (pred = [118. fcmpge], succ = [])
 Edges: [119. 14 -> 15, cnt = 0, prob = nan]
 
-CFG Node 15 (cnt = 100):
+CFG Node 15 (cnt = 10000):
     113. fmov   c.1.0,  r57                   (pred = [], succ = [])
     161. fcmpge  c.1,  c.0   ->  p25          (pred = [], succ = [162. jump  ])
     162. jump                        ?  p25   (pred = [161. fcmpge], succ = [])
-Edges: [162. 15 -> 17, cnt = 100, prob = 1.0]
+Edges: [162. 15 -> 17, cnt = 10000, prob = 1.0]
 
 CFG Node 16 (cnt = 0):
     115. fmov   c.0.0,  r57                   (pred = [], succ = [])
@@ -196,7 +196,7 @@ CFG Node 16 (cnt = 0):
     164. jump                        ?  p26   (pred = [163. fcmpge], succ = [])
 Edges: [164. 16 -> 17, cnt = 0, prob = nan]
 
-STOP CFG Node 17 (cnt = 100):
+STOP CFG Node 17 (cnt = 10000):
     139. fstore c.0.0, o/kind                  (pred = [], succ = [])
 Edges: 
 
@@ -237,9 +237,7 @@ Edges:
 
 
 =================================
-Results compare:
-	kind: diff = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 Speedup:
-	oc = 6502
-	orig_oc = 6502
+	oc = 650076
+	orig_oc = 650076
 	speedup = 1.0
